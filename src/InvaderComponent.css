@@ -1,0 +1,44 @@
+.invader {
+    position: relative;
+}
+.invader .hover{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    visibility: hidden;
+    background: #000000bb;
+    font-size: 1.5em;
+}
+.invader:hover .hover{
+    visibility: visible;
+}
+.invader:hover img {
+    filter: grayscale(100%);
+}
+
+.invader .unknown-position-indicator {
+    position: absolute;
+    z-index: 2;
+    top: 0.2em;
+    right: 0.2em;
+    width: 0.9em;
+    height: 0.9em;
+    background-color: #ff6400;
+    text-align: center;
+    font-size: 2em;
+    border-radius: 0.45em;
+    color: white;
+    line-height: 0.85em;
+}
+.name {
+
+}
+.score {
+    font-size: 4em;
+    font-family: 'DotGothic16', sans-serif;
+}
+.flashed-at, .built-at {
+    font-size: 0.7em;
+}
