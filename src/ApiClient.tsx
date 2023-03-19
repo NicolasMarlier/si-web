@@ -5,7 +5,7 @@ import _ from "lodash"
 const OFFICIAL_BASE_PATH = "https://space-invaders.com/api"
 const UID = process.env.SPACE_INVADER_UID
 
-const BASE_PATH = "https://space-invader-api.herokuapp.com"
+const BASE_PATH = "https://si-api.onrender.com"
 
 
 const fetchInvaders = (): Promise<any> => {
