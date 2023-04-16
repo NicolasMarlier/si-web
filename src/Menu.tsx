@@ -72,14 +72,14 @@ const Menu:React.FC<Props> = (props) => {
                     <input type="radio" value="placing"       name="mode" className="btn" checked={mode === "placing"} onChange={onModeChangeEvent}/><span className="if-selected">&gt;&gt; </span>PLACER<span className="if-selected"> &lt;&lt;</span>
                 </label>
 
-                <div className="buttons">
+                { false && <div className="buttons">
                     {
                         loading && <div className="btn save-button" onClick={clickSave}>
                             <img src={saveButton}/>
                         </div>
                     }
                     <div className="btn save-button" onClick={clickSync}>SYNC</div>
-                </div>
+                </div>}
             </div>
         </div>
     )
