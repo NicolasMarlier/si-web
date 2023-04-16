@@ -1,0 +1,92 @@
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: #111111;
+  
+  font-family: 'VT323', monospace;
+  color: #ffcc00;
+
+  #root {
+    height: 100%;
+
+    .App, .TotalFrame {
+      height: 100%;
+
+      .MainFrame {
+        width: 75%
+      }
+
+      .small {
+        font-size: 0.7em;
+        opacity: 0.4;
+      }
+
+      .h-100 {
+        height: 100%;
+      }
+
+      .map-container {
+        display: none;
+        position: relative;
+        height: 100%;
+        
+        &.placing {
+          display: flex;
+
+          #map {
+            position: absolute;
+            top: 0;
+            bottom: 50%;
+            left: 5em;
+            right: 0;
+          }
+          
+          #pano {
+              position: absolute;
+              top: 50%;
+              bottom: 0;
+              left: 5em;
+              right: 0;
+          }
+        }
+
+        &.by-position {
+          display: flex;
+
+          #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+
+          }
+
+          #pano {
+            display: none;
+          }
+        }
+      }
+      
+      .invader-group {
+        margin: 0 0 6em 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width:640px) {
+  html, body {
+    #root {
+      .App, .TotalFrame {
+        .MainFrame {
+          width: 100%
+        }
+      }
+    }
+  }
+}

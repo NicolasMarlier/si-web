@@ -3,13 +3,13 @@ import React, { useEffect, useState } from 'react'
 import _ from "lodash"
 import moment from "moment"
 import "moment/locale/fr"
-import './App.css';
+import './App.scss';
+import './Menu.scss';
 import apiClient from './ApiClient'
 import InvaderComponent from './InvaderComponent';
 import InvaderSelector from './InvaderSelector'
 import Map from "./Map"
-import saveButton from './save-button.png';
-import invaderLogo from './invader.svg';
+import Menu from "./Menu"
 
 const App:React.FC = () => {
   const [invaders, setInvaders] = useState([] as Invader[])
@@ -19,10 +19,6 @@ const App:React.FC = () => {
   useEffect(() => {
     apiClient.listInvaders().then(setInvaders)
   }, [])
-
-  const onModeChange=(event: any) => {
-    setMode(event.target.value)
-  }
 
   const moveInvader = (invader: Invader, position: Position | undefined) => {
     apiClient.saveInvader(
@@ -42,14 +38,13 @@ const App:React.FC = () => {
     apiClient.saveInvaders(invaders)
   }
 
+  const syncInvaders = async() => {
+    await apiClient.syncInvaders()
+    return apiClient.listInvaders().then(setInvaders)
+  }
+
   const sortedInvaderGroups = () => {
-    if(mode == "date_flash") {
-      return [{
-          name: "TOUS",
-          invaders: _.sortBy(invaders, "date_flash")
-      }]
-    }
-    else if(mode == "day_flash") {
+    if(mode === "day_flash") {
       return _.orderBy(
         _.map(
           _.groupBy(invaders, ({date_flash}) => date_flash.substring(0, 10)),
@@ -64,52 +59,42 @@ const App:React.FC = () => {
         'desc'
       )
     }
-    else {
+    else if(mode === "date_pos") {
       return [{
         name: "",
         invaders: _.sortBy(invaders, "date_pos")
       }]
+    }
+    else {
+      return []
     }
   }
 
   return (
     <div className="App">
       { (invaders.length > 0) &&
-        <div className="MainFrame d-flex flex-row justify-content-end">
-          <div className="menu text-center d-flex flex-column justify-content-center">
-            <div className="logo-container">
-              <img src={invaderLogo}/>
-            </div>
-            <div className="summary d-flex flex-row justify-content-center">
-              <div className="p-2">{_.sum(_.map(invaders, "point"))}<span className="small"> pts</span></div>
-              <div className="p-2">{invaders.length}<span className="small"> flashés</span></div>
-            </div>
-            <label className={`form-control btn ${mode == "day_flash" ? "selected" : ""}`} >
-              <input type="radio" value="day_flash"  name="mode" className="btn" checked={mode == "day_flash"} onChange={onModeChange}/><span className="if-selected">&gt;&gt; </span>DANS L'ORDRE DE FLASH<span className="if-selected"> &lt;&lt;</span>
-            </label>
-            <label className={`form-control btn ${mode == "date_pos" ? "selected" : ""}`} >
-              <input type="radio" value="date_pos"   name="mode" className="btn" checked={mode == "date_pos"} onChange={onModeChange}/><span className="if-selected">&gt;&gt; </span>DANS L'ORDRE DE POSE<span className="if-selected"> &lt;&lt;</span>
-            </label>
-            <label className={`form-control btn ${mode == "by-position" ? "selected" : ""}`} >
-              <input type="radio" value="by-position"   name="mode" className="btn" checked={mode == "by-position"} onChange={onModeChange}/><span className="if-selected">&gt;&gt; </span>CARTE<span className="if-selected"> &lt;&lt;</span>
-            </label>
+        <div className="TotalFrame d-flex flex-row justify-content-end">
+          <Menu
+            mode={mode}
+            onModeChange={setMode}
+            totalFlashedCount={invaders.length}
+            totalPoints={_.sum(_.map(invaders, "point"))}
+            loading={pendingUpdates}
+            onClickSave={saveInvaders}
+            onClickSync={syncInvaders}
+            />
 
-            <div className="buttons">
-              { pendingUpdates && <div className="btn save-button" onClick={saveInvaders}><img src={saveButton}/></div>
-              }
-            </div>
-          </div>
-
-          <div className="w-75 h-100">
+          <div className="MainFrame h-100">
             <div className={`map-container ${mode}`}>
               <InvaderSelector
                 onSelect={invader => moveInvader(invader, currentPosition)}
-                invaders={_.orderBy(_.filter(invaders, ({position}) => position === undefined), "date_flash", "asc")}
+                invaders={_.orderBy(_.filter(invaders, ({position}) => !position), "date_flash", "asc")}
                 selectedInvader={undefined}/>
               <Map
                 invaders={invaders}
                 moveInvader={moveInvader}
                 onMove={setCurrentPosition}
+                editMode={mode == 'placing'}
                 />
             </div>
             { mode !== "by-position" && <div>

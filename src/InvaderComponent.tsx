@@ -12,7 +12,7 @@ const InvaderComponent: React.FC<{invader: Invader, onClick: () => void}> = (pro
             <div className="flashed-at">Flashé { moment(date_flash).locale("fr").format('dddd D MMMM à HH:mm') }</div>
             <div className="built-at">Posé en { moment(date_pos).format("YYYY") }</div>
         </div>
-        { position === undefined && <div className="unknown-position-indicator">?</div>}
+        { !position && <div className="unknown-position-indicator">?</div>}
     </div>
 }
 

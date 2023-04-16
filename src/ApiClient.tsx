@@ -3,9 +3,9 @@ import coords from "./coords"
 import reponse from "./response"
 import _ from "lodash"
 const OFFICIAL_BASE_PATH = "https://space-invaders.com/api"
-const UID = process.env.SPACE_INVADER_UID
+const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UID
 
-const BASE_PATH = "https://si-api.onrender.com"
+const BASE_PATH = "https://space-invader-api.herokuapp.com"
 
 
 const fetchInvaders = (): Promise<any> => {
@@ -31,8 +31,18 @@ const fetchInvaders = (): Promise<any> => {
 //     })
 // }
 
+const syncInvaders = async() => {
+    const officialInvaders = await fetchInvadersOffical()
+    const myInvaders = await fetchInvaders()
+    const existingSpaceIds = _.map(myInvaders, "space_id")
+    // return myInvaders.concat(officialInvaders.filter(i => !_.includes(existingSpaceIds, i.space_id)))
+
+    return saveInvaders(officialInvaders.filter(i => !_.includes(existingSpaceIds, i.space_id)))
+    // return cached("invaders", fetchInvadersNoConnection).then((invaders) => addCoords(invaders))
+}
+
 const fetchInvadersOffical = (): Promise<Invader[]> => {
-    return axios.get(`${BASE_PATH}/flashesV2/?uid=${UID}`)
+    return axios.get(`${OFFICIAL_BASE_PATH}/flashesV2/?uid=${UID}`)
         .then(({data: {invaders}}) => Object.values(invaders) as Invader[])
 }
 
@@ -69,11 +79,12 @@ const saveInvader=(invaders: Invader[], updatedInvader: Invader): Promise<Invade
 
 const saveInvaders = (invaders: Invader[]) => {
     axios
-        .post(`http://localhost:3001/save`, invaders)
+        .post(`${BASE_PATH}/invaders`, invaders)
 }
 
 export default {
     listInvaders,
     saveInvader,
-    saveInvaders
+    saveInvaders,
+    syncInvaders
 }

@@ -12,11 +12,12 @@ const loader = new Loader({
 interface Props {
     invaders: Invader[],
     moveInvader: (invader: Invader, position: Position) => void,
-    onMove: (position: Position | undefined) => void
+    onMove: (position: Position | undefined) => void,
+    editMode: boolean
 }
 
 const Map:React.FC<Props> = (props) => {
-    const {invaders, moveInvader, onMove} = props;
+    const {invaders, moveInvader, onMove, editMode} = props;
     const [googleLoaded, setGoogleLoaded] = useState(false)
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
     const map = useRef(undefined as google.maps.Map | undefined)
@@ -55,56 +56,67 @@ const Map:React.FC<Props> = (props) => {
                     }
                 ]
             })
-            const positionMarkerIcon = {
-                path: "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1",
-                fillColor: "#ff0000",
-                fillOpacity: 0.8,
-                strokeWeight: 0,
-                rotation: 0,
-                scale: 2
-            };
-            let positionMarker = new google.maps.Marker({
-                position: PARIS_CENTER,
-                draggable:true,
-                icon: positionMarkerIcon,
-                map: map.current
-            });
+            
+            
             
 
-            const panorama = new google.maps.StreetViewPanorama(
-                document.getElementById("pano") as HTMLElement,
-                {
-                  position: PARIS_CENTER,
-                  pov: {
-                    heading: 34,
-                    pitch: 10,
-                  },
-                }
-              );
-            positionMarker.addListener(
-                "dragend",
-                (e: any) => {
-                    const gPosition = e.latLng
-                    panorama.setPosition(gPosition)
-                    onMove(gPosition ? {lat: gPosition.lat(), lng: gPosition.lng()} : undefined)
-                }
-            )
-            panorama.addListener("position_changed", () => {
-                const gPosition = panorama.getPosition()
-                positionMarker.setPosition(gPosition)
-                onMove(gPosition ? {lat: gPosition.lat(), lng: gPosition.lng()} : undefined)
-            })
-            panorama.addListener("pov_changed", () => {
-                positionMarker.setIcon({
-                    ...positionMarkerIcon,
-                    ...{
-                        rotation: panorama.getPov().heading
+            
+            
+            if(editMode) {
+
+                const positionMarkerIcon = {
+                    path: "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1",
+                    fillColor: "#ff0000",
+                    fillOpacity: 0.8,
+                    strokeWeight: 0,
+                    rotation: 0,
+                    scale: 2
+                };
+
+                const panorama = new google.maps.StreetViewPanorama(
+                    document.getElementById("pano") as HTMLElement,
+                    {
+                      position: PARIS_CENTER,
+                      pov: {
+                        heading: 34,
+                        pitch: 10,
+                      },
                     }
+                  );
+
+                let positionMarker = new google.maps.Marker({
+                    position: PARIS_CENTER,
+                    draggable:editMode,
+                    icon: positionMarkerIcon,
+                    map: map.current
+                });
+
+                positionMarker.addListener(
+                    "dragend",
+                    (e: any) => {
+                        const gPosition = e.latLng
+                        panorama.setPosition(gPosition)
+                        onMove(gPosition ? {lat: gPosition.lat(), lng: gPosition.lng()} : undefined)
+                    }
+                )
+
+                panorama.addListener("position_changed", () => {
+                    const gPosition = panorama.getPosition()
+                    positionMarker.setPosition(gPosition)
+                    onMove(gPosition ? {lat: gPosition.lat(), lng: gPosition.lng()} : undefined)
                 })
-            })
-            map.current.setStreetView(panorama);
+                panorama.addListener("pov_changed", () => {
+                    positionMarker.setIcon({
+                        ...positionMarkerIcon,
+                        ...{
+                            rotation: panorama.getPov().heading
+                        }
+                    })
+                })
+                map.current.setStreetView(panorama);
+            }
         }
-    }, [googleLoaded])
+    }, [googleLoaded, editMode])
     useEffect(() => {
         console.log("Map current changed")
     }, [map.current])
@@ -127,7 +139,7 @@ const Map:React.FC<Props> = (props) => {
                             scaledSize: new google.maps.Size(30, 30),
                             anchor: new google.maps.Point(10, 10),
                         },
-                        draggable:true,
+                        draggable:editMode,
                         map: map.current,
                     });
                     marker.addListener("dragend", (e: any) => { moveInvader(invader, {lat: e.latLng.lat(), lng: e.latLng.lng()})})
@@ -135,7 +147,7 @@ const Map:React.FC<Props> = (props) => {
                 }
             ))
         }
-    }, [invaders, map.current, googleLoaded])
+    }, [invaders, map.current, googleLoaded, editMode])
 
     return <div>
         <div id="map"/>
