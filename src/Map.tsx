@@ -19,14 +19,44 @@ interface Props {
 const Map:React.FC<Props> = (props) => {
     const {invaders, moveInvader, onMove, editMode} = props;
     const [googleLoaded, setGoogleLoaded] = useState(false)
+    const [timer, setTimer] = useState(0)
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
     const map = useRef(undefined as google.maps.Map | undefined)
+    const positionMarker = useRef(undefined as google.maps.Marker | undefined)
 
     useEffect(() => {
         loader.load().then(() => {
             setGoogleLoaded(true)
         })
     }, [])
+
+    useEffect(() => {
+        navigator.permissions.query({ name: "geolocation" }).then((result) => {})
+    }, [])
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position: GeolocationPosition) => {
+                    let pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude,
+                    };
+
+                    positionMarker.current?.setPosition(pos)
+                },
+                () => {}
+            );
+        }
+    
+        const intervalId = setInterval(() => {
+          setTimer(timer + 1)
+        }, 5000);
+    
+        // clear interval on re-render to avoid memory leaks
+        return () => clearInterval(intervalId);
+      }, [timer]);
+    
 
     useEffect(() => {
         if(googleLoaded) {
@@ -59,7 +89,18 @@ const Map:React.FC<Props> = (props) => {
             
             
             
-
+            positionMarker.current = new google.maps.Marker({
+                position: PARIS_CENTER,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: "blue",
+                    fillOpacity: 0.6,
+                    strokeWeight: 0,
+                    rotation: 0,
+                    scale: 10,
+                },
+                map: map.current
+            });
             
             
             if(editMode) {
