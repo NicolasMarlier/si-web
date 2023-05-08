@@ -6,7 +6,7 @@ const InvaderSelector:React.FC<{onSelect: (invader: Invader) => void, invaders: 
     return <div className="invader-selector">
         { invaders.map(invader => 
             <div className={selectedInvader && selectedInvader.name === invader.name ? "selected" : ""}
-                key={invader.space_id}
+                key={invader.name}
                 onClick={() => onSelect(invader)}>
                 <img src={invader.image} className="w-100"/>
             </div>

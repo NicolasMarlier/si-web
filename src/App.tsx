@@ -70,6 +70,8 @@ const App:React.FC = () => {
     }
   }
 
+  const totalPoints = _.sum(_.map(invaders, "point")) + _.keys(_.groupBy(invaders, "city_id")).length * 100
+
   return (
     <div className="App">
       { (invaders.length > 0) &&
@@ -78,7 +80,7 @@ const App:React.FC = () => {
             mode={mode}
             onModeChange={setMode}
             totalFlashedCount={invaders.length}
-            totalPoints={_.sum(_.map(invaders, "point"))}
+            totalPoints={totalPoints}
             loading={pendingUpdates}
             onClickSave={saveInvaders}
             onClickSync={syncInvaders}
@@ -108,7 +110,7 @@ const App:React.FC = () => {
                   </h2>
                   <div className="d-flex flex-row flex-wrap">
                     { invaders.map(invader => 
-                      <InvaderComponent onClick={() => {}} key={invader.space_id} invader={invader}/>
+                      <InvaderComponent onClick={() => {}} key={invader.name} invader={invader}/>
                     )}
                   </div>
                 </div>

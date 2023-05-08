@@ -34,10 +34,10 @@ const fetchInvaders = (): Promise<any> => {
 const syncInvaders = async() => {
     const officialInvaders = await fetchInvadersOffical()
     const myInvaders = await fetchInvaders()
-    const existingSpaceIds = _.map(myInvaders, "space_id")
+    const existingNames = _.map(myInvaders, "name")
     // return myInvaders.concat(officialInvaders.filter(i => !_.includes(existingSpaceIds, i.space_id)))
 
-    return saveInvaders(officialInvaders.filter(i => !_.includes(existingSpaceIds, i.space_id)))
+    return saveInvaders(officialInvaders.filter(i => !_.includes(existingNames, i.name)))
     // return cached("invaders", fetchInvadersNoConnection).then((invaders) => addCoords(invaders))
 }
 
@@ -66,7 +66,7 @@ const listInvaders = (): Promise<Invader[]> => {
 const saveInvader=(invaders: Invader[], updatedInvader: Invader): Promise<Invader[]> => {
     return new Promise(resolve => resolve(
         invaders.map(invader => {
-            if(invader.space_id === updatedInvader.space_id) {
+            if(invader.name === updatedInvader.name) {
                 return updatedInvader
             }
             else {
