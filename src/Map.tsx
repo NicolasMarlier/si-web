@@ -1,8 +1,9 @@
 import React, {useEffect, useState, useRef } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
-import "./Map.css"
+import "./Map.scss"
 import _ from "lodash"
 import ApiClient from './ApiClient'
+import { useLocation } from 'react-router-dom'
 
 const PARIS_CENTER = { lat: 48.865597265895, lng: 2.3358128965449443};
 const loader = new Loader({
@@ -19,6 +20,9 @@ const Map:React.FC = () => {
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
     const map = useRef(undefined as google.maps.Map | undefined)
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
+
+    const location = useLocation();
+    const display = location.pathname == "/map"
 
     useEffect(() => {
         ApiClient.listInvaders().then(setInvaders)
@@ -61,7 +65,7 @@ const Map:React.FC = () => {
 
     useEffect(() => {
         if(googleLoaded) {
-            console.log("COUCOU")
+            console.log("COUCOU", document.getElementById("map"))
             map.current = new google.maps.Map(document.getElementById("map") as HTMLElement, {
                 center: PARIS_CENTER,
                 zoom: 13,
@@ -135,7 +139,9 @@ const Map:React.FC = () => {
         }
     }, [invaders, map.current, googleLoaded])
 
-    return <div>
+    return <div
+        id="map-container"
+        className={`${display ? 'visible' : 'hidden'}`}>
         <div id="map"/>
         <div id="pano"/>
     </div>

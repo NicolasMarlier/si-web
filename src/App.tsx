@@ -88,6 +88,7 @@ const App:React.FC = () => {
 
           <div className="MainFrame h-100">
             <Outlet/>
+            <Map/>
           </div>
         </div>
       }

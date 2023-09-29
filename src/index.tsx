@@ -8,39 +8,30 @@ import reportWebVitals from './reportWebVitals';
 
 import {
   createBrowserRouter,
+  createRoutesFromElements,
   Navigate,
   RouterProvider,
+  Route
 } from "react-router-dom";
 
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <App/>,
-    children: [
-      {
-        path: "collection",
-        element: <Collection/>
-      },
-      {
-        path: "map",
-        element: <Map/>
-      },
-      {
-        path: "place",
-        element: <Collection/>
-      },
-      {
-        path: "",
-        element: <Navigate to="collection" replace={true}/>
-      },
 
-      // {
-      //   path: "/map",
-      //   element: <Map/>
-      // }
-    ]
-  },
-]);
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route
+      path="/"
+      element={<App />}
+    >
+      <Route
+        path="collection"
+        element={<Collection />}/>
+      <Route
+        path="map"
+        element={<div/>}/>
+      <Route
+        path=""
+        element={<Navigate to="collection" replace={true}/>}/>
+    </Route>
+));
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
