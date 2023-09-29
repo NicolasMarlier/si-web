@@ -7,13 +7,39 @@ const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UI
 
 const BASE_PATH = "https://space-invader-api.herokuapp.com"
 
-const getToken = (): string => {
-    return window.localStorage.get("token")
+
+const login = (uuid: string): Promise<any> => {
+    window.localStorage.setItem("uuid", uuid)
+    return axios.get(
+        `${BASE_PATH}/invaders`,
+        axiosConfig()
+    )
 }
 
+const uuid = (): string | null => {
+    return window.localStorage.getItem('uuid')
+}
+
+const axiosConfig = (): any => ({
+        headers: { Authorization: `Bearer ${uuid()}` }
+})
+
+const handleError = () => logout
+
+const logout = () => {
+    window.localStorage.removeItem("uuid")
+    window.location.href = "/login"
+}
+
+
+
 const fetchInvaders = (): Promise<any> => {
-    return axios.get(`${BASE_PATH}/invaders`)
-        .then(({data: {data: invaders}}) => invaders as Invader[])
+    return axios.get(
+        `${BASE_PATH}/invaders`,
+        axiosConfig()
+    )
+    .then(({data: {data: invaders}}) => invaders as Invader[])
+    .catch(handleError)
 }
 
 // const addCoords = (invaders: Invader[]) => {
@@ -82,10 +108,17 @@ const saveInvader=(invaders: Invader[], updatedInvader: Invader): Promise<Invade
 
 const saveInvaders = (invaders: Invader[]) => {
     axios
-        .post(`${BASE_PATH}/invaders`, invaders)
+        .post(
+            `${BASE_PATH}/invaders`,
+            invaders,
+            axiosConfig()
+        )
+        .catch(handleError)
 }
 
 export default {
+    login,
+    logout,
     listInvaders,
     saveInvader,
     saveInvaders,

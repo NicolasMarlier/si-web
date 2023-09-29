@@ -1,16 +1,35 @@
-#map {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
 
-    
-}
 
 #map-container {
-    &.visible {
+    #map {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    #pano {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    &.full-map {
         display: block;
+        #pano {
+            display: none;
+        }
+    }
+    &.map-and-pano {
+        #map {
+            bottom: 50%;
+        }
+        #pano {
+            display: block;
+        }
     }
     &.hidden {
         display: none;

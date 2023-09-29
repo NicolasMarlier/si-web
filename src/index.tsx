@@ -3,7 +3,8 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import Collection from './Collection'
-import Map from './Map'
+import Login from './Login'
+
 import reportWebVitals from './reportWebVitals';
 
 import {
@@ -18,18 +19,27 @@ import {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route
-      path="/"
-      element={<App />}
-    >
+      path="">
       <Route
-        path="collection"
-        element={<Collection />}/>
+          path="/login"
+          element={<Login/>}/>
       <Route
-        path="map"
-        element={<div/>}/>
-      <Route
-        path=""
-        element={<Navigate to="collection" replace={true}/>}/>
+        path="/"
+        element={<App />}
+      >
+        <Route
+          path="collection"
+          element={<Collection />}/>
+        <Route
+          path="map"
+          element={<div/>}/>
+        <Route
+          path="place"
+          element={<div/>}/>
+        <Route
+          path=""
+          element={<Navigate to="collection" replace={true}/>}/>
+      </Route>
     </Route>
 ));
 

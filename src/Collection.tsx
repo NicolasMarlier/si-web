@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from 'react'
 
 import _ from "lodash"
-import ApiClient from './ApiClient'
 import InvaderComponent from './InvaderComponent';
+import { useOutletContext } from 'react-router-dom';
 
 
 const Collection:React.FC = () => {
-  const [invaders, setInvaders] = useState([] as Invader[])
+  const [invaders] = useOutletContext() as Invader[]
   const mode = "date_pos"
-  
-  useEffect(() => {
-    ApiClient.listInvaders().then(setInvaders)
-  }, [])
 
   const sortedInvaderGroups = () => {
     // if(mode === "day_flash") {

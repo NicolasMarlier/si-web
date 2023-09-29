@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import saveButton from './save-button.png'
 import invaderLogo from './invader.svg'
 import { NavLink } from 'react-router-dom'
+import ApiClient from './ApiClient'
 
 interface Props {
     mode: string,
@@ -84,6 +85,7 @@ const Menu:React.FC<Props> = (props) => {
                             <img src={saveButton}/>
                         </div>
                     }
+                    <div className="btn save-button" onClick={ApiClient.logout}>LOGOUT</div>
                     <div className="btn save-button" onClick={clickSync}>SYNC</div>
                 </div>
             </div>

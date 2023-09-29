@@ -1,9 +1,8 @@
 import React, {useEffect, useState, useRef } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
+import { useLocation } from 'react-router-dom'
 import "./Map.scss"
 import _ from "lodash"
-import ApiClient from './ApiClient'
-import { useLocation } from 'react-router-dom'
 
 const PARIS_CENTER = { lat: 48.865597265895, lng: 2.3358128965449443};
 const loader = new Loader({
@@ -11,10 +10,13 @@ const loader = new Loader({
     version: "weekly"
 });
 
+interface Props {
+    invaders: Invader[],
+    moveInvader: (invader: Invader, position: Position) => void,
+}
 
-
-const Map:React.FC = () => {
-    const [invaders, setInvaders] = useState([] as Invader[])
+const Map:React.FC<Props> = (props) => {
+    const {invaders, moveInvader} = props;
     const [googleLoaded, setGoogleLoaded] = useState(false)
     const [timer, setTimer] = useState(0)
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
@@ -22,15 +24,16 @@ const Map:React.FC = () => {
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
 
     const location = useLocation();
-    const display = location.pathname == "/map"
-
-    useEffect(() => {
-        ApiClient.listInvaders().then(setInvaders)
-    }, [])
+    const containerClass = {
+        "/map": "full-map",
+        "/place": "map-and-pano"
+    }[location.pathname] || "hidden"
+    const editMode = {
+        "/place": true
+    }[location.pathname] || false
 
     useEffect(() => {
         loader.load().then(() => {
-            console.log("GOOGLE LOADED!")
             setGoogleLoaded(true)
         })
     }, [])
@@ -65,7 +68,6 @@ const Map:React.FC = () => {
 
     useEffect(() => {
         if(googleLoaded) {
-            console.log("COUCOU", document.getElementById("map"))
             map.current = new google.maps.Map(document.getElementById("map") as HTMLElement, {
                 center: PARIS_CENTER,
                 zoom: 13,
@@ -107,8 +109,61 @@ const Map:React.FC = () => {
                 },
                 map: map.current
             });
+            
+            
+            if(editMode) {
+
+                const positionMarkerIcon = {
+                    path: "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1",
+                    fillColor: "#ff0000",
+                    fillOpacity: 0.8,
+                    strokeWeight: 0,
+                    rotation: 0,
+                    scale: 2
+                };
+
+                const panorama = new google.maps.StreetViewPanorama(
+                    document.getElementById("pano") as HTMLElement,
+                    {
+                      position: PARIS_CENTER,
+                      pov: {
+                        heading: 34,
+                        pitch: 10,
+                      },
+                    }
+                  );
+
+                let positionMarker = new google.maps.Marker({
+                    position: PARIS_CENTER,
+                    draggable:editMode,
+                    icon: positionMarkerIcon,
+                    map: map.current
+                });
+
+                positionMarker.addListener(
+                    "dragend",
+                    (e: any) => {
+                        const gPosition = e.latLng
+                        panorama.setPosition(gPosition)
+                    }
+                )
+
+                panorama.addListener("position_changed", () => {
+                    const gPosition = panorama.getPosition()
+                    positionMarker.setPosition(gPosition)
+                })
+                panorama.addListener("pov_changed", () => {
+                    positionMarker.setIcon({
+                        ...positionMarkerIcon,
+                        ...{
+                            rotation: panorama.getPov().heading
+                        }
+                    })
+                })
+                map.current.setStreetView(panorama);
+            }
         }
-    }, [googleLoaded])
+    }, [googleLoaded, editMode])
     useEffect(() => {
         console.log("Map current changed")
     }, [map.current])
@@ -131,17 +186,19 @@ const Map:React.FC = () => {
                             scaledSize: new google.maps.Size(30, 30),
                             anchor: new google.maps.Point(10, 10),
                         },
+                        draggable:editMode,
                         map: map.current,
                     });
+                    marker.addListener("dragend", (e: any) => { moveInvader(invader, {lat: e.latLng.lat(), lng: e.latLng.lng()})})
                     return marker
                 }
             ))
         }
-    }, [invaders, map.current, googleLoaded])
+    }, [invaders, map.current, googleLoaded, editMode])
 
     return <div
         id="map-container"
-        className={`${display ? 'visible' : 'hidden'}`}>
+        className={ containerClass }>
         <div id="map"/>
         <div id="pano"/>
     </div>
