@@ -7,6 +7,9 @@ const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UI
 
 const BASE_PATH = "https://space-invader-api.herokuapp.com"
 
+const getToken = (): string => {
+    return window.localStorage.get("token")
+}
 
 const fetchInvaders = (): Promise<any> => {
     return axios.get(`${BASE_PATH}/invaders`)

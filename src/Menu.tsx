@@ -1,8 +1,9 @@
 import React, { useState } from "react"
 
 
-import saveButton from './save-button.png';
-import invaderLogo from './invader.svg';
+import saveButton from './save-button.png'
+import invaderLogo from './invader.svg'
+import { NavLink } from 'react-router-dom'
 
 interface Props {
     mode: string,
@@ -26,9 +27,8 @@ const Menu:React.FC<Props> = (props) => {
 
     const [showMenuMobile, setShowMenuMobile] = useState(false)
 
-    const onModeChangeEvent=(event: any) => {
+    const onClickNav=(event: any) => {
         setShowMenuMobile(false)
-        onModeChange(event.target.value)
     }
 
     const toggleMenu = () => {
@@ -59,27 +59,33 @@ const Menu:React.FC<Props> = (props) => {
                     <div className="p-2">{totalFlashedCount}<span className="small"> flashés</span></div>
                 </div>
                 
-                <label className={`form-control btn ${mode === "day_flash" ? "selected" : ""}`} >
-                    <input type="radio" value="day_flash"  name="mode" className="btn" checked={mode === "day_flash"} onChange={onModeChangeEvent}/><span className="if-selected">&gt;&gt; </span>DANS L'ORDRE DE FLASH<span className="if-selected"> &lt;&lt;</span>
-                </label>
-                <label className={`form-control btn ${mode === "date_pos" ? "selected" : ""}`} >
-                    <input type="radio" value="date_pos"   name="mode" className="btn" checked={mode === "date_pos"} onChange={onModeChangeEvent}/><span className="if-selected">&gt;&gt; </span>DANS L'ORDRE DE POSE<span className="if-selected"> &lt;&lt;</span>
-                </label>
-                <label className={`form-control btn ${mode === "by-position" ? "selected" : ""}`} >
-                    <input type="radio" value="by-position"   name="mode" className="btn" checked={mode === "by-position"} onChange={onModeChangeEvent}/><span className="if-selected">&gt;&gt; </span>CARTE<span className="if-selected"> &lt;&lt;</span>
-                </label>
-                <label className={`form-control btn ${mode === "placing" ? "selected" : ""}`} >
-                    <input type="radio" value="placing"       name="mode" className="btn" checked={mode === "placing"} onChange={onModeChangeEvent}/><span className="if-selected">&gt;&gt; </span>PLACER<span className="if-selected"> &lt;&lt;</span>
-                </label>
+                <NavLink
+                    to="/collection"
+                    className="btn"
+                    onClick={onClickNav}>
+                        &gt;&gt; COLLECTION &lt;&lt;
+                </NavLink>
+                <NavLink
+                    to="/map"
+                    className="btn"
+                    onClick={onClickNav}>
+                        &gt;&gt; CARTE &lt;&lt;
+                </NavLink>
+                <NavLink
+                    to="/place"
+                    className="btn"
+                    onClick={onClickNav}>
+                        &gt;&gt; PLACE &lt;&lt;
+                </NavLink>
 
-                { false && <div className="buttons">
+                <div className="buttons">
                     {
                         loading && <div className="btn save-button" onClick={clickSave}>
                             <img src={saveButton}/>
                         </div>
                     }
                     <div className="btn save-button" onClick={clickSync}>SYNC</div>
-                </div>}
+                </div>
             </div>
         </div>
     )

@@ -44,31 +44,25 @@
         }
 
         label input {
-        visibility: hidden;
+            visibility: hidden;
         }
 
         .btn {
-        border: none !important;
-        color: #ffcc00aa !important;
-        font-size: 1.5em;
+            border: none !important;
+            color: #ffcc00aa !important;
+            font-size: 1.5em;
 
-        &.if-selected {
-            display: none;
-        }
-
-        &:hover {
-            color: #ffcc00 !important;
-        }
-        &.selected, &:active {
-            font-weight: bold;
-            color: #ffcc00 !important;
-        }
-
-        &.selected {
-            .if-selected {
-            display: inline;
+            &.if-selected {
+                display: none;
             }
-        }
+
+            &:hover {
+                color: #ffcc00 !important;
+            }
+            &.active {
+                font-weight: bold;
+                color: #ffcc00 !important;
+            }
         }
 
         .buttons {

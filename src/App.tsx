@@ -10,7 +10,7 @@ import InvaderComponent from './InvaderComponent';
 import InvaderSelector from './InvaderSelector'
 import Map from "./Map"
 import Menu from "./Menu"
-
+import { Outlet } from 'react-router-dom'
 const App:React.FC = () => {
   const [invaders, setInvaders] = useState([] as Invader[])
   const [pendingUpdates, setPendingUpdates] = useState(false)
@@ -87,35 +87,7 @@ const App:React.FC = () => {
             />
 
           <div className="MainFrame h-100">
-            <div className={`map-container ${mode}`}>
-              <InvaderSelector
-                onSelect={invader => moveInvader(invader, currentPosition)}
-                invaders={_.orderBy(_.filter(invaders, ({position}) => !position), "date_flash", "asc")}
-                selectedInvader={undefined}/>
-              <Map
-                invaders={invaders}
-                moveInvader={moveInvader}
-                onMove={setCurrentPosition}
-                editMode={mode == 'placing'}
-                />
-            </div>
-            { mode !== "by-position" && <div>
-              { sortedInvaderGroups().map(
-                ({name, invaders}) => <div key={name} className="invader-group">
-                  <h2 className="d-flex flex-row justify-content-start">
-                    <div className="p-2">{_.sum(_.map(invaders, "point"))}<span className="small"> pts</span></div>
-                    <div className="p-2">{invaders.length}<span className="small"> flashés</span></div>
-                    
-                    <div className="p-2"><span className="small">{name.toUpperCase()}</span></div>
-                  </h2>
-                  <div className="d-flex flex-row flex-wrap">
-                    { invaders.map(invader => 
-                      <InvaderComponent onClick={() => {}} key={invader.name} invader={invader}/>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div> }
+            <Outlet/>
           </div>
         </div>
       }
