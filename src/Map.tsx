@@ -182,7 +182,7 @@ const Map:React.FC<Props> = (props) => {
                     let marker = new google.maps.Marker({
                         position: invader.position,
                         icon: {
-                            url: invader.image,
+                            url: invader.hosted_image_30_url,
                             scaledSize: new google.maps.Size(30, 30),
                             anchor: new google.maps.Point(10, 10),
                         },

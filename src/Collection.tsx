@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import _ from "lodash"
 import InvaderComponent from './InvaderComponent';
 import { useOutletContext } from 'react-router-dom';
-
+import "./Collection.scss"
 
 const Collection:React.FC = () => {
   const [invaders] = useOutletContext() as Invader[]
@@ -41,11 +41,11 @@ const Collection:React.FC = () => {
     <div className="Collection">
       { sortedInvaderGroups().map(
         ({name, invaders}) => <div key={name} className="invader-group">
-          <h2 className="d-flex flex-row justify-content-start">
-            <div className="p-2">{_.sum(_.map(invaders, "point"))}<span className="small"> pts</span></div>
-            <div className="p-2">{invaders.length}<span className="small"> flashés</span></div>
+          <h2 className="stats">
+            <div className="stat">{_.sum(_.map(invaders, "point"))}<span className="small"> pts</span></div>
+            <div className="stat">{invaders.length}<span className="small"> flashés</span></div>
             
-            <div className="p-2"><span className="small">{name.toUpperCase()}</span></div>
+            <div className="stat"><span className="small">{name.toUpperCase()}</span></div>
           </h2>
           <div className="d-flex flex-row flex-wrap">
             { invaders.map(invader => 

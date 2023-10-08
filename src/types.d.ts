@@ -1,5 +1,8 @@
 interface Invader {
     image: string
+    hosted_image_url: string
+    hosted_image_30_url: string
+    hosted_image_300_url: string
     point: integer
     city_id: integer
     city_name: string

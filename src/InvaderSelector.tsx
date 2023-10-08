@@ -8,7 +8,7 @@ const InvaderSelector:React.FC<{onSelect: (invader: Invader) => void, invaders: 
             <div className={selectedInvader && selectedInvader.name === invader.name ? "selected" : ""}
                 key={invader.name}
                 onClick={() => onSelect(invader)}>
-                <img src={invader.image} className="w-100"/>
+                <img src={invader.hosted_image_300_url} className="w-100"/>
             </div>
         )}
     </div>

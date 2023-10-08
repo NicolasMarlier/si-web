@@ -3,9 +3,9 @@ import "./InvaderComponent.css"
 import moment from "moment"
 
 const InvaderComponent: React.FC<{invader: Invader, onClick: () => void}> = (props) => {
-    const {invader: {name, point, image, date_flash, date_pos, position}, onClick} = props
+    const {invader: {name, point, hosted_image_300_url, date_flash, date_pos, position}, onClick} = props
     return <div className="invader w-25" onClick={onClick}>
-        <img src={image} className="w-100"/>
+        <img src={hosted_image_300_url} className="w-100"/>
         <div className="hover d-flex flex-column justify-content-center text-center">
             <div className="name">{ name }</div>
             <div className="score">{ point }</div>
