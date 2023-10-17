@@ -1,8 +1,10 @@
-import React, {useEffect, useState, useRef } from "react"
+import React, {useEffect, useState, useRef, useContext } from "react"
 import { Loader } from "@googlemaps/js-api-loader"
 import { useLocation } from 'react-router-dom'
 import "./Map.scss"
 import _ from "lodash"
+import HintsManager from "./HintsManager"
+import { HintsContext } from "./HintsProvider"
 
 const PARIS_CENTER = { lat: 48.865597265895, lng: 2.3358128965449443};
 const loader = new Loader({
@@ -18,18 +20,24 @@ interface Props {
 const Map:React.FC<Props> = (props) => {
     const {invaders, moveInvader} = props;
     const [googleLoaded, setGoogleLoaded] = useState(false)
+    const [currentPosition, setCurrentPosition] = useState(PARIS_CENTER as Position)
     const [timer, setTimer] = useState(0)
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
+    const [hintMarkers, setHintMarkers] = useState([] as google.maps.Marker[])
     const map = useRef(undefined as google.maps.Map | undefined)
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
+    const { hints, _fetchHints, deleteHint, _loadingHints, _setLoadingHints} = useContext(HintsContext)
+
 
     const location = useLocation();
     const containerClass = {
         "/map": "full-map",
-        "/place": "map-and-pano"
+        "/place": "map-and-pano",
+        "/place-hint": "map-pano-and-hints"
     }[location.pathname] || "hidden"
     const editMode = {
-        "/place": true
+        "/place": true,
+        "/place-hint": true
     }[location.pathname] || false
 
     useEffect(() => {
@@ -94,6 +102,8 @@ const Map:React.FC<Props> = (props) => {
                     }
                 ]
             })
+
+            
             
             
             
@@ -145,12 +155,16 @@ const Map:React.FC<Props> = (props) => {
                     (e: any) => {
                         const gPosition = e.latLng
                         panorama.setPosition(gPosition)
+                        setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
                     }
                 )
 
                 panorama.addListener("position_changed", () => {
                     const gPosition = panorama.getPosition()
                     positionMarker.setPosition(gPosition)
+                    if(gPosition) {
+                        setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
+                    }
                 })
                 panorama.addListener("pov_changed", () => {
                     positionMarker.setIcon({
@@ -160,6 +174,16 @@ const Map:React.FC<Props> = (props) => {
                         }
                     })
                 })
+
+                map.current.addListener(
+                    "click",
+                    (e: any) => {
+                        const gPosition = e.latLng
+                        positionMarker.setPosition(gPosition)
+                        panorama.setPosition(gPosition)
+                        setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
+                    }
+                )
                 map.current.setStreetView(panorama);
             }
         }
@@ -183,7 +207,7 @@ const Map:React.FC<Props> = (props) => {
                         position: invader.position,
                         icon: {
                             url: invader.hosted_image_30_url,
-                            scaledSize: new google.maps.Size(30, 30),
+                            // scaledSize: new google.maps.Size(30, 30),
                             anchor: new google.maps.Point(10, 10),
                         },
                         draggable:editMode,
@@ -196,9 +220,38 @@ const Map:React.FC<Props> = (props) => {
         }
     }, [invaders, map.current, googleLoaded, editMode])
 
+    useEffect(() => {
+        if(googleLoaded && map.current) {
+            _.each(hintMarkers, (marker) => marker.setMap(null))
+            setHintMarkers(_.map(
+                hints,
+                hint => {
+                    let marker = new google.maps.Marker({
+                        position: hint.position,
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            fillColor: "#44aa33",
+                            fillOpacity: 1.0,
+                            strokeWeight: 0,
+                            rotation: 0,
+                            scale: 8,
+                        },
+                        map: map.current,
+                    });
+                    if(editMode) {
+                        marker.addListener('click', () => deleteHint(hint))
+                    }
+                    return marker
+                }
+            ))
+        }
+    }, [hints, map.current, googleLoaded, editMode])
+    
+
     return <div
         id="map-container"
         className={ containerClass }>
+        <HintsManager currentPosition={currentPosition}/>
         <div id="map"/>
         <div id="pano"/>
     </div>

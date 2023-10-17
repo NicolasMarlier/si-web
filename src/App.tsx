@@ -8,10 +8,13 @@ import ApiClient from './ApiClient'
 import Map from "./Map"
 import Menu from "./Menu"
 import { Outlet } from 'react-router-dom'
+import { HintsProvider } from './HintsProvider';
+
+
 const App:React.FC = () => {
   const [invaders, setInvaders] = useState([] as Invader[])
   const [pendingUpdates, setPendingUpdates] = useState(false)
-  const [mode, setMode] = useState("day_flash" as string)
+  const [hint, setHints] = useState([] as Hint[])
 
   useEffect(() => {
     ApiClient.listInvaders().then(setInvaders)
@@ -43,12 +46,11 @@ const App:React.FC = () => {
   const totalPoints = _.sum(_.map(invaders, "point")) + _.keys(_.groupBy(invaders, "city_id")).length * 100
 
   return (
-    <div className="App">
+    <HintsProvider>
+      <div className="App">
       { (invaders.length > 0) &&
         <div className="TotalFrame d-flex flex-row justify-content-end">
           <Menu
-            mode={mode}
-            onModeChange={setMode}
             totalFlashedCount={invaders.length}
             totalPoints={totalPoints}
             loading={pendingUpdates}
@@ -64,7 +66,8 @@ const App:React.FC = () => {
           </div>
         </div>
       }
-    </div>
+      </div>
+    </HintsProvider>
   );
 }
 

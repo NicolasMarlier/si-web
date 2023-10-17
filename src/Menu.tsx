@@ -7,9 +7,7 @@ import { NavLink } from 'react-router-dom'
 import ApiClient from './ApiClient'
 
 interface Props {
-    mode: string,
     loading: boolean,
-    onModeChange: (mode: string) => void,
     onClickSync: () => void,
     onClickSave: () => void,
     totalPoints: number,
@@ -17,9 +15,7 @@ interface Props {
 }
 const Menu:React.FC<Props> = (props) => {
     const {
-        mode,
         loading,
-        onModeChange,
         onClickSync,
         onClickSave,
         totalPoints,
@@ -28,7 +24,7 @@ const Menu:React.FC<Props> = (props) => {
 
     const [showMenuMobile, setShowMenuMobile] = useState(false)
 
-    const onClickNav=(event: any) => {
+    const onClickNav=() => {
         setShowMenuMobile(false)
     }
 
@@ -77,6 +73,13 @@ const Menu:React.FC<Props> = (props) => {
                     className="btn"
                     onClick={onClickNav}>
                         &gt;&gt; PLACE &lt;&lt;
+                </NavLink>
+
+                <NavLink
+                    to="/place-hint"
+                    className="btn"
+                    onClick={onClickNav}>
+                        &gt;&gt; PLACE HINT &lt;&lt;
                 </NavLink>
 
                 <div className="buttons">

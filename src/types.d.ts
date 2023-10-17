@@ -23,3 +23,10 @@ interface Position {
     lat: number,
     lng: number
 }
+
+interface Hint {
+    id?: number,
+    description: string
+    placed_at: string
+    position: Position
+}

@@ -31,6 +31,15 @@
             display: block;
         }
     }
+    &.map-pano-and-hints {
+        #map {
+            bottom: 50%;
+            left: 10%;
+        }
+        #pano {
+            display: block;
+        }
+    }
     &.hidden {
         display: none;
         background: red;

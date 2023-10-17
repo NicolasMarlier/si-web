@@ -37,6 +37,9 @@ const router = createBrowserRouter(
           path="place"
           element={<div/>}/>
         <Route
+          path="place-hint"
+          element={<div/>}/>
+        <Route
           path=""
           element={<Navigate to="collection" replace={true}/>}/>
       </Route>

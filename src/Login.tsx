@@ -16,7 +16,7 @@ const Login:React.FC = () => {
             console.log("HELLO, YES!")
             navigate("/");
         })
-        .catch(() => {
+        .catch((e) => {
             setErrorMessage("Oups")
             setLoading(false)
         })
