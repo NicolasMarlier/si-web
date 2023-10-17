@@ -3,8 +3,8 @@ import _ from "lodash"
 const OFFICIAL_BASE_PATH = "https://space-invaders.com/api"
 const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UID
 
-// const BASE_PATH = "https://space-invader-api.herokuapp.com"
-const BASE_PATH = "http://localhost:3001"
+const BASE_PATH = "https://space-invader-api.herokuapp.com"
+// const BASE_PATH = "http://localhost:3001"
 
 
 
