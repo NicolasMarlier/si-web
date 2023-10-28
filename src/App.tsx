@@ -25,7 +25,7 @@ const App:React.FC = () => {
           <Menu/>
 
           <div className="MainFrame h-100">
-            <Collection/>
+            <Outlet/>
             { !loadingLocation && <Map/>}
           </div>
         </div>

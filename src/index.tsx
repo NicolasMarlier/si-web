@@ -22,15 +22,15 @@ const router = createBrowserRouter(
     <Route
       path="">
       <Route
+        index
+        element={<Navigate to="/map" replace />}/>
+      <Route
           path="/login"
           element={<Login/>}/>
       <Route
         path="/"
         element={<AppProvider><App /></AppProvider>}
       >
-        <Route
-          index
-          element={<Navigate to="/map" replace />}/>
         <Route
           path="collection"
           element={<Collection />}/>
