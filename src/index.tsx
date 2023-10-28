@@ -29,6 +29,9 @@ const router = createBrowserRouter(
         element={<AppProvider><App /></AppProvider>}
       >
         <Route
+          index
+          element={<Navigate to="/map" replace />}/>
+        <Route
           path="collection"
           element={<Collection />}/>
         <Route
@@ -40,9 +43,7 @@ const router = createBrowserRouter(
         <Route
           path="place-hint"
           element={<div/>}/>
-        <Route
-          path=""
-          element={<Navigate to="map" replace={true}/>}/>
+        
       </Route>
     </Route>
 ));

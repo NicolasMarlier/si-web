@@ -114,11 +114,6 @@ const Map = () => {
                 ]
             })
 
-            google.maps.event.addListenerOnce(map.current, 'idle', function(){
-                setLoadingMap(false)
-                console.log("loaded!")
-            });
-
             
             
             
@@ -143,6 +138,7 @@ const Map = () => {
                 }
             )
             
+            setLoadingMap(false)
             
             if(editMode) {
 
