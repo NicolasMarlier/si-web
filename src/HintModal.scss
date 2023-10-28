@@ -1,0 +1,33 @@
+.hint-modal {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: #222;
+    border-radius: 0.2em;
+    box-shadow: 0 0 1em #00000066;
+    z-index: 1000;
+    padding: 0.5em;
+    display: flex;
+
+    input {
+        display: block;
+        width: 100%;
+        margin: 0 0.4em 0 0;
+        font-size: 1.2em;
+        background: #fff;
+        border-radius: 0.2em;
+        border: 2px solid #fff;
+        padding: 0.2em 0.4em;
+        line-height: 1.6em;
+    }
+
+    .btn {
+        color: #ffcc00;
+        border: 2px solid #ffcc00;
+        font-size: 1.2em;
+        display: block;
+        padding: 0.2em 2em;
+        line-height: 1.6em;
+    }
+}

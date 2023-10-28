@@ -14,6 +14,7 @@ import {
   RouterProvider,
   Route
 } from "react-router-dom";
+import { AppProvider } from './AppProvider';
 
 
 const router = createBrowserRouter(
@@ -25,7 +26,7 @@ const router = createBrowserRouter(
           element={<Login/>}/>
       <Route
         path="/"
-        element={<App />}
+        element={<AppProvider><App /></AppProvider>}
       >
         <Route
           path="collection"
@@ -41,7 +42,7 @@ const router = createBrowserRouter(
           element={<div/>}/>
         <Route
           path=""
-          element={<Navigate to="collection" replace={true}/>}/>
+          element={<Navigate to="map" replace={true}/>}/>
       </Route>
     </Route>
 ));

@@ -3,30 +3,27 @@ import { Loader } from "@googlemaps/js-api-loader"
 import { useLocation } from 'react-router-dom'
 import "./Map.scss"
 import _ from "lodash"
-import HintsManager from "./HintsManager"
-import { HintsContext } from "./HintsProvider"
+import { AppContext } from "./AppProvider"
+import HintModal from "./HintModal"
+import ApiClient from "./ApiClient"
 
-const PARIS_CENTER = { lat: 48.865597265895, lng: 2.3358128965449443};
 const loader = new Loader({
     apiKey: "AIzaSyDha0RPgjh7dHqdtYpZp3NoUPc-DpVwBqo",
     version: "weekly"
 });
 
-interface Props {
-    invaders: Invader[],
-    moveInvader: (invader: Invader, position: Position) => void,
-}
-
-const Map:React.FC<Props> = (props) => {
-    const {invaders, moveInvader} = props;
+const Map = () => {
     const [googleLoaded, setGoogleLoaded] = useState(false)
-    const [currentPosition, setCurrentPosition] = useState(PARIS_CENTER as Position)
-    const [timer, setTimer] = useState(0)
+
+    const [currentHint, setCurrentHint] = useState(null as Hint | null)
+    
+    
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
     const [hintMarkers, setHintMarkers] = useState([] as google.maps.Marker[])
     const map = useRef(undefined as google.maps.Map | undefined)
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
-    const { hints, _fetchHints, deleteHint, _loadingHints, _setLoadingHints} = useContext(HintsContext)
+    const { hints, invaders, moveInvader, deleteHint, setLoadingMap, currentGeoLocation, currentOrientation, fetchHints } = useContext(AppContext)
+    const [currentPosition, setCurrentPosition] = useState(currentGeoLocation as Position)
 
 
     const location = useLocation();
@@ -40,46 +37,60 @@ const Map:React.FC<Props> = (props) => {
         "/place-hint": true
     }[location.pathname] || false
 
+    const defaultZoom = {
+        "/map": 16,
+        "/place": 13,
+        "/place-hint": 13
+    }[location.pathname] || 13
+
+    const placeHint = async() => {
+        await ApiClient.insertHint({
+            description: "Bla",
+            position: currentPosition,
+            placed_at: (new Date()).toString()
+        })
+        await fetchHints()
+        setCurrentHint(_.maxBy(hints, 'id') || null)
+        map.current?.setCenter(currentPosition)
+    }
+
+    const deleteCurrentHint = () => {
+        if(currentHint) {
+            deleteHint(currentHint)
+            setCurrentHint(null)
+        }
+    }
+
+    const onUpdateDescription = async(description: string) => {
+        if(!currentHint) {
+            return
+        }
+        await ApiClient.updateHint({
+                ...currentHint,
+                ...{
+                    description: description
+                }
+        })
+        await fetchHints()
+        setCurrentHint(_.find(hints, {id: currentHint.id}) || null)
+    }
+
     useEffect(() => {
         loader.load().then(() => {
             setGoogleLoaded(true)
         })
     }, [])
 
-    useEffect(() => {
-        navigator.permissions.query({ name: "geolocation" }).then((result) => {})
-    }, [])
-
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position: GeolocationPosition) => {
-                    let pos = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude,
-                    };
-
-                    positionMarker.current?.setPosition(pos)
-                },
-                () => {}
-            );
-        }
     
-        const intervalId = setInterval(() => {
-          setTimer(timer + 1)
-        }, 5000);
-    
-        // clear interval on re-render to avoid memory leaks
-        return () => clearInterval(intervalId);
-      }, [timer]);
     
 
     useEffect(() => {
         if(googleLoaded) {
             map.current = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-                center: PARIS_CENTER,
-                zoom: 13,
+                center: currentGeoLocation,
+                zoom: defaultZoom,
                 disableDefaultUI: true,
+                clickableIcons: false,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 styles: [
                     {
@@ -103,12 +114,17 @@ const Map:React.FC<Props> = (props) => {
                 ]
             })
 
+            google.maps.event.addListenerOnce(map.current, 'idle', function(){
+                setLoadingMap(false)
+                console.log("loaded!")
+            });
+
             
             
             
             
             positionMarker.current = new google.maps.Marker({
-                position: PARIS_CENTER,
+                position: currentGeoLocation,
                 icon: {
                     path: google.maps.SymbolPath.CIRCLE,
                     fillColor: "blue",
@@ -119,6 +135,13 @@ const Map:React.FC<Props> = (props) => {
                 },
                 map: map.current
             });
+
+            map.current.addListener(
+                "click",
+                (e: any) => {
+                    setCurrentHint(null)
+                }
+            )
             
             
             if(editMode) {
@@ -135,7 +158,7 @@ const Map:React.FC<Props> = (props) => {
                 const panorama = new google.maps.StreetViewPanorama(
                     document.getElementById("pano") as HTMLElement,
                     {
-                      position: PARIS_CENTER,
+                      position: currentGeoLocation,
                       pov: {
                         heading: 34,
                         pitch: 10,
@@ -144,7 +167,7 @@ const Map:React.FC<Props> = (props) => {
                   );
 
                 let positionMarker = new google.maps.Marker({
-                    position: PARIS_CENTER,
+                    position: currentGeoLocation,
                     draggable:editMode,
                     icon: positionMarkerIcon,
                     map: map.current
@@ -188,6 +211,28 @@ const Map:React.FC<Props> = (props) => {
             }
         }
     }, [googleLoaded, editMode])
+
+    useEffect(() => {
+        if(positionMarker.current) {
+            positionMarker.current.setPosition(currentGeoLocation)
+        }
+        
+    }, [currentGeoLocation])
+
+    useEffect(() => {
+        if(positionMarker.current) {
+            positionMarker.current.setIcon({
+                path: "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1",
+                fillColor: "#ff0000",
+                fillOpacity: 0.8,
+                strokeWeight: 0,
+                rotation: currentOrientation,
+                scale: 2
+            })
+        }
+        
+    }, [currentOrientation])
+    
     useEffect(() => {
         console.log("Map current changed")
     }, [map.current])
@@ -197,6 +242,7 @@ const Map:React.FC<Props> = (props) => {
     useEffect(() => {
         console.log("Google loaded changed")
     }, [googleLoaded])
+    
     useEffect(() => {
         if(googleLoaded && map.current) {
             _.each(markers, (marker) => marker.setMap(null))
@@ -230,17 +276,21 @@ const Map:React.FC<Props> = (props) => {
                         position: hint.position,
                         icon: {
                             path: google.maps.SymbolPath.CIRCLE,
-                            fillColor: "#44aa33",
+                            fillColor: "#22ff3366",
                             fillOpacity: 1.0,
                             strokeWeight: 0,
                             rotation: 0,
-                            scale: 8,
+                            scale: 20,
                         },
                         map: map.current,
                     });
-                    if(editMode) {
-                        marker.addListener('click', () => deleteHint(hint))
-                    }
+                    marker.addListener('click', () => {
+                        map.current?.setCenter(hint.position)
+                        setCurrentHint(hint)
+                    })
+                    // if(editMode) {
+                        
+                    // }
                     return marker
                 }
             ))
@@ -251,9 +301,17 @@ const Map:React.FC<Props> = (props) => {
     return <div
         id="map-container"
         className={ containerClass }>
-        <HintsManager currentPosition={currentPosition}/>
         <div id="map"/>
         <div id="pano"/>
+        { currentHint && <HintModal
+            hint={currentHint}
+            onDelete={deleteCurrentHint}
+            onUpdateDescription={onUpdateDescription}
+            />
+        }
+        { !currentHint && <div className="buttons">
+            <div className="btn" onClick={placeHint}>Placer un indice</div>
+        </div>}
     </div>
 }
 

@@ -1,26 +1,19 @@
-import React, { useState } from "react"
+import React, { useContext, useState } from "react"
 
 
 import saveButton from './save-button.png'
 import invaderLogo from './invader.svg'
 import { NavLink } from 'react-router-dom'
 import ApiClient from './ApiClient'
+import { AppContext } from "./AppProvider"
+import _ from "lodash"
 
-interface Props {
-    loading: boolean,
-    onClickSync: () => void,
-    onClickSave: () => void,
-    totalPoints: number,
-    totalFlashedCount: number,
-}
-const Menu:React.FC<Props> = (props) => {
-    const {
-        loading,
-        onClickSync,
-        onClickSave,
-        totalPoints,
-        totalFlashedCount
-    } = props
+
+const Menu = () => {
+    const { loading, invaders, syncInvadersFromOfficialApi } = useContext(AppContext)
+
+    const totalPoints = _.sum(_.map(invaders, "point")) + _.keys(_.groupBy(invaders, "city_id")).length * 100
+    const totalFlashedCount = invaders.length
 
     const [showMenuMobile, setShowMenuMobile] = useState(false)
 
@@ -34,12 +27,7 @@ const Menu:React.FC<Props> = (props) => {
 
     const clickSync = () => {
         setShowMenuMobile(false)
-        onClickSync()
-    }
-
-    const clickSave = () => {
-        setShowMenuMobile(false)
-        onClickSave()
+        syncInvadersFromOfficialApi()
     }
 
     return (
@@ -83,13 +71,9 @@ const Menu:React.FC<Props> = (props) => {
                 </NavLink>
 
                 <div className="buttons">
-                    {
-                        loading && <div className="btn save-button" onClick={clickSave}>
-                            <img src={saveButton}/>
-                        </div>
-                    }
                     <div className="btn save-button" onClick={ApiClient.logout}>LOGOUT</div>
                     <div className="btn save-button" onClick={clickSync}>SYNC</div>
+                    { loading && <div>Loading...</div>}
                 </div>
             </div>
         </div>

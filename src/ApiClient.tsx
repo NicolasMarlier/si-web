@@ -3,8 +3,8 @@ import _ from "lodash"
 const OFFICIAL_BASE_PATH = "https://space-invaders.com/api"
 const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UID
 
-const BASE_PATH = "https://space-invader-api.herokuapp.com"
-// const BASE_PATH = "http://localhost:3001"
+// const BASE_PATH = "https://space-invader-api.herokuapp.com"
+const BASE_PATH = "http://localhost:3001"
 
 
 
@@ -45,17 +45,16 @@ const fetchInvaders = (): Promise<any> => {
         `${BASE_PATH}/invaders`,
         axiosConfig()
     )
-    .then(({data: {data: invaders}}) => invaders as Invader[])
+    .then(({data: invaders}) => invaders as Invader[])
     .catch(handleError)
 }
 
 
 const syncInvaders = async() => {
-    const officialInvaders = await fetchInvadersOffical()
-    const myInvaders = await fetchInvaders()
-    const existingNames = _.map(myInvaders, "name")
-
-    return saveInvaders(officialInvaders.filter(i => !_.includes(existingNames, i.name)))
+    //const officialInvaders = await fetchInvadersOffical()
+    //localStorage.setItem("invaders_cache", JSON.stringify(officialInvaders))
+    const officialInvaders = await fetchInvaderCached()
+    return syncApiFromOfficalApi(officialInvaders)
 }
 
 const fetchInvadersOffical = (): Promise<Invader[]> => {
@@ -63,37 +62,41 @@ const fetchInvadersOffical = (): Promise<Invader[]> => {
         .then(({data: {invaders}}) => Object.values(invaders) as Invader[])
 }
 
+const fetchInvaderCached = (): Promise<Invader[]> => new Promise((resolve) => {
+    resolve(JSON.parse(localStorage.getItem("invaders_cache") || "{}"))
+})
+
 const listInvaders = (): Promise<Invader[]> => {
     return fetchInvaders()
 }
 
-const saveInvader=(invaders: Invader[], updatedInvader: Invader): Promise<Invader[]> => {
-    return new Promise(resolve => resolve(
-        invaders.map(invader => {
-            if(invader.name === updatedInvader.name) {
-                return updatedInvader
-            }
-            else {
-                return invader
-            }
-        })
-        )
+const updateInvader = (invader: Invader) => axios
+    .put(
+        `${BASE_PATH}/invaders/${invader.name}`,
+        invader,
+        axiosConfig()
     )
-}
+    .catch(handleError)
 
-const saveInvaders = (invaders: Invader[]) => {
-    axios
-        .post(
-            `${BASE_PATH}/invaders`,
-            invaders,
-            axiosConfig()
-        )
-        .catch(handleError)
-}
+const syncApiFromOfficalApi = (official_invaders: Invader[]) => axios
+    .post(
+        `${BASE_PATH}/invaders/sync_from_official_api`,
+        official_invaders,
+        axiosConfig()
+    )
+    .catch(handleError)
 
 const insertHint = (hint: Hint): Promise<any> => axios
     .post(
         `${BASE_PATH}/hints/`,
+        hint,
+        axiosConfig()
+    )
+    .catch(handleError)
+
+const updateHint = (hint: Hint): Promise<any> => axios
+    .put(
+        `${BASE_PATH}/hints/${hint.id}`,
         hint,
         axiosConfig()
     )
@@ -110,7 +113,7 @@ const listHints = (): Promise<any> => axios
         `${BASE_PATH}/hints`,
         axiosConfig()
     )
-    .then(({data: {data: hints}}) => hints as Hint[])
+    .then(({data: hints}) => hints as Hint[])
     .catch(handleError)
 
 
@@ -118,10 +121,10 @@ export default {
     login,
     logout,
     listInvaders,
-    saveInvader,
-    saveInvaders,
+    updateInvader,
     syncInvaders,
     insertHint,
+    updateHint,
     listHints,
     deleteHint
 }

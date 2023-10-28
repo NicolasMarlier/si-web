@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 
 import _ from "lodash"
 import InvaderComponent from './InvaderComponent';
 import { useOutletContext } from 'react-router-dom';
 import "./Collection.scss"
+import { AppContext } from './AppProvider';
 
-const Collection:React.FC = () => {
-  const [invaders] = useOutletContext() as Invader[]
+const Collection = () => {
+  const { invaders } = useContext(AppContext)
   const mode = "date_pos"
 
   const sortedInvaderGroups = () => {

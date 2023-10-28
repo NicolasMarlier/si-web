@@ -19,6 +19,11 @@ interface InvadersGroup {
     date; string
     invaders: Invader[]
 }
+interface GeoPosition {
+    lat: number,
+    lng: number,
+    heading: number | null
+}
 interface Position {
     lat: number,
     lng: number
