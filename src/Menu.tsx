@@ -1,13 +1,11 @@
-import React, { useContext, useState } from "react"
+import { useContext, useState } from "react"
 
 
-import saveButton from './save-button.png'
-import invaderLogo from './invader.svg'
+
 import { NavLink } from 'react-router-dom'
 import ApiClient from './ApiClient'
 import { AppContext } from "./AppProvider"
 import _ from "lodash"
-import mapIcon from './icons/map.svg'
 
 
 const Menu = () => {

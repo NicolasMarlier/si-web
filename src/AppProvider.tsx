@@ -1,6 +1,14 @@
 import { createContext, useEffect, useState } from 'react';
-import ApiClient from "./ApiClient"
 import _ from 'lodash';
+
+import ApiClient from "./ApiClient"
+import Cache from './Cache'
+
+
+const PARIS_CENTER = {
+    lat: 48.864716,
+    lng: 2.349014
+} as Position
 
 interface Context {
     hints: Hint[]
@@ -98,9 +106,19 @@ export const AppProvider = ({ children }: any) => {
         }
     }, [hints])
 
+    useEffect(() => {
+        if(currentGeoLocation.lat) {
+            Cache.set(Cache.KEY_CURRENT_POSITION, currentGeoLocation)
+        }
+    }, [currentGeoLocation])
     
-
+    
     const fetchGeoLocation = () => {
+        const cached_current_position = Cache.get(Cache.KEY_CURRENT_POSITION)
+        if(cached_current_position) {
+            setLoadingLocation(false)
+            setCurrentGeoLocation(cached_current_position)
+        }
         navigator.geolocation.getCurrentPosition(position => {
             setLoadingLocation(false)
             setCurrentGeoLocation({
@@ -110,6 +128,17 @@ export const AppProvider = ({ children }: any) => {
             })
         })
 
+        setTimeout(() => {
+            if(loadingLocation) {
+                setLoadingLocation(false)
+                setCurrentGeoLocation({
+                    lat: PARIS_CENTER.lat,
+                    lng: PARIS_CENTER.lng,
+                    heading: 0
+                })
+            }
+        }, 5000)
+
         return navigator.geolocation.watchPosition((position) => {
             setLoadingLocation(false)
             setCurrentGeoLocation({
@@ -118,6 +147,8 @@ export const AppProvider = ({ children }: any) => {
                 heading: position.coords.heading,
             })
         });
+
+        
     }
 
     useEffect(() => {

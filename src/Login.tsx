@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import ApiClient from './ApiClient'
+import './Login.scss'
 
 const Login:React.FC = () => {
     const [loading, setLoading] = useState(false)
@@ -22,14 +23,19 @@ const Login:React.FC = () => {
         })
     }
     
-    return <div>
-        <h3>Please login, dear hunter:</h3>
-        <input value={uuid} onChange={e => setUuid(e.target.value)}/>
-        <small>Your invader UID</small>
+    return <div className="login-container">
+        <div className="login-frame">
+            <div className="logo-container"/>
+            <div className="input-frame">
+                <input value={uuid} onChange={e => setUuid(e.target.value)}/>
+            </div>
 
-        <div className="btn" onClick={login}>LOGIN</div>
-        { loading && <div>Loading...</div>}
-        { errorMessage && <div>{ errorMessage }</div>}
+            <div className="btn block" onClick={login}>
+                <div className="text">LOGIN</div>
+            </div>
+            { loading && <div>Loading...</div>}
+            { errorMessage && <div>{ errorMessage }</div>}
+        </div>
     </div>
 }
 

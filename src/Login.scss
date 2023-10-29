@@ -1,0 +1,27 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    .login-frame {
+
+        .logo-container {
+            height: 60px;
+            mask: url(icons/invader.svg) no-repeat center;
+            background-color: #ffcc0066;
+            margin: 0 auto;
+        }
+
+        width: 300px;
+        height: 300px;
+        padding: 1em;
+        text-align: center;
+
+        .input-frame {
+            padding: 2em 0;
+        }
+
+    }
+}
