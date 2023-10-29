@@ -1,5 +1,6 @@
 .invader {
     position: relative;
+    cursor: pointer;
 }
 .invader .hover{
     position: absolute;
@@ -31,14 +32,15 @@
     border-radius: 0.45em;
     color: white;
     line-height: 0.85em;
-}
-.name {
 
-}
-.score {
-    font-size: 4em;
-    font-family: 'DotGothic16', sans-serif;
-}
-.flashed-at, .built-at {
-    font-size: 0.7em;
+    .name {
+
+    }
+    .score {
+        font-size: 4em;
+        font-family: 'DotGothic16', sans-serif;
+    }
+    .flashed-at, .built-at {
+        font-size: 0.7em;
+    }
 }

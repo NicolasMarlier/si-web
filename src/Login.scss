@@ -21,6 +21,18 @@
 
         .input-frame {
             padding: 2em 0;
+
+            input {
+                display: block;
+                background: #fff;
+                border-radius: 0.2em;
+                border: 2px solid #ddd;
+                line-height: 2em;
+                font-size: 1.6em;
+              
+                padding: 0.25em 0.5em;
+                width: 100%;
+              }
         }
 
     }

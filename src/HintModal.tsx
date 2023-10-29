@@ -15,13 +15,21 @@ const HintModal = (props: Props) => {
         setCurrentDescription(description)
     },[description])
 
+    const descriptionUpdated = currentDescription != description
+    
+
     return <div className="hint-modal">
+        <div className="btn red" onClick={onDelete}>
+            <div className="icon delete"/>
+        </div>
         <input
             value={ currentDescription }
             onChange={(e) => setCurrentDescription(e.currentTarget.value)}
             />
-        <div className="btn" onClick={() => onUpdateDescription(currentDescription)}>save</div>
-        <div className="btn" onClick={onDelete}>DELETE</div>
+        <div className={`btn green ${descriptionUpdated ? '' : 'hide'}`} onClick={() => onUpdateDescription(currentDescription)}>
+            <div className="icon save"/>
+        </div>
+        
     </div>
 }
 

@@ -1,10 +1,10 @@
 import React from "react"
-import "./InvaderComponent.css"
+import "./InvaderComponent.scss"
 import moment from "moment"
 
 const InvaderComponent: React.FC<{invader: Invader, onClick: () => void}> = (props) => {
     const {invader: {name, point, hosted_image_300_url, date_flash, date_pos, position}, onClick} = props
-    return <div className="invader w-25" onClick={onClick}>
+    return <div className="invader" onClick={onClick}>
         <img src={hosted_image_300_url} className="w-100"/>
         <div className="hover d-flex flex-column justify-content-center text-center">
             <div className="name">{ name }</div>

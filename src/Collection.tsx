@@ -50,7 +50,7 @@ const Collection = () => {
             
             <div className="stat"><span className="small">{name.toUpperCase()}</span></div>
           </h2>
-          <div className="d-flex flex-row flex-wrap">
+          <div className="invader-items">
             { invaders.map(invader => 
               <InvaderComponent onClick={() => setCurrentInvader(invader)} key={invader.name} invader={invader}/>
             )}

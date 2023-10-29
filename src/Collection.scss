@@ -5,8 +5,19 @@
         .stat {
             padding: 0.3em 0.5em;
         }
+    }
+    .invader-items {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-content: flex-start;
+        row-gap: 1em;
 
-
+        div {
+            width: 120px;
+            border-radius: 0.4em;
+            overflow: hidden;
+        }
     }
 }
 

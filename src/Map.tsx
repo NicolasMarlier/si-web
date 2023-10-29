@@ -17,7 +17,7 @@ const Map = () => {
     
     
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
-    const [hintMarkers, setHintMarkers] = useState([] as google.maps.Marker[])
+    const [hintMarkers, setHintMarkers] = useState({} as {[key: string]: google.maps.Marker})
     const map = useRef(undefined as google.maps.Map | undefined)
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
     const { hints, invaders, moveInvader, deleteHint, setCurrentHint, currentHint, setLoadingMap, currentGeoLocation, currentOrientation, fetchHints } = useContext(AppContext)
@@ -69,6 +69,31 @@ const Map = () => {
         })
     }, [])
 
+    useEffect(() => {
+        _.each(hintMarkers, (marker, _id) => {
+            marker.setIcon({
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: "#22ff3366",
+                fillOpacity: 1.0,
+                strokeWeight: 0,
+                rotation: 0,
+                scale: 20,
+            })
+        })
+        if(currentHint && currentHint.id) {
+            hintMarkers[currentHint.id].setIcon({
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: "#22ff3366",
+                fillOpacity: 1.0,
+                strokeColor: "#22ff33",
+                strokeWeight: 2,
+                rotation: 0,
+                scale: 20,
+            })
+        }
+        
+    }, [currentHint])
+
     
     
 
@@ -101,11 +126,7 @@ const Map = () => {
                     }
                 ]
             })
-
-            
-            
-            
-            
+        
             positionMarker.current = new google.maps.Marker({
                 position: currentGeoLocation,
                 icon: {
@@ -252,9 +273,9 @@ const Map = () => {
 
     useEffect(() => {
         if(googleLoaded && map.current) {
-            _.each(hintMarkers, (marker) => marker.setMap(null))
-            setHintMarkers(_.map(
-                hints,
+            _.each(hintMarkers, (marker, _id) => marker.setMap(null))
+            setHintMarkers(_.mapValues(
+                _.keyBy(hints, 'id'),
                 hint => {
                     let marker = new google.maps.Marker({
                         position: hint.position,
@@ -266,6 +287,7 @@ const Map = () => {
                             rotation: 0,
                             scale: 20,
                         },
+                        zIndex: 10,
                         map: map.current,
                     });
                     marker.addListener('click', () => {

@@ -1,9 +1,50 @@
+
+@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
 .invader-zoomed {
     z-index: 100;
     position: fixed;
     bottom: 0;
     top: 0;
-    left: 0;
+    left: 80px;
     right: 0;
     background-color: white;
+
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+
+    img {
+        display: block;
+        max-height: 500px;
+        max-width: 500px;
+        width: auto;
+        height: auto;
+        border-radius: 2em;
+    }
+
+    .details {
+        font-family: 'VT323';
+        font-size: 2em;
+        color: #aaa;
+
+        .score {
+            color: #ffcc00;
+        }
+        .flashed-at {
+            font-size: 0.7em;
+        }
+    }
 }
+
+@media screen and (max-width:640px) {
+    .invader-zoomed {
+        left: 0;
+        flex-direction: column;
+
+        img {
+            max-height: 300px;
+            max-width: 300px;
+        }
+    }
+}  
