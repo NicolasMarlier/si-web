@@ -11,12 +11,12 @@
     background: #000000bb;
     font-size: 1.5em;
 }
-.invader:hover .hover{
+/* .invader:hover .hover{
     visibility: visible;
-}
-.invader:hover img {
+} */
+/* .invader:hover img {
     filter: grayscale(100%);
-}
+} */
 
 .invader .unknown-position-indicator {
     position: absolute;

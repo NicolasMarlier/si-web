@@ -5,10 +5,12 @@ import InvaderComponent from './InvaderComponent';
 import { useOutletContext } from 'react-router-dom';
 import "./Collection.scss"
 import { AppContext } from './AppProvider';
+import InvaderZoomedComponent from './InvaderZoomedComponent';
 
 const Collection = () => {
   const { invaders } = useContext(AppContext)
   const mode = "date_pos"
+  const [currentInvader, setCurrentInvader] = useState(null as Invader | null)
 
   const sortedInvaderGroups = () => {
     // if(mode === "day_flash") {
@@ -50,9 +52,10 @@ const Collection = () => {
           </h2>
           <div className="d-flex flex-row flex-wrap">
             { invaders.map(invader => 
-              <InvaderComponent onClick={() => {}} key={invader.name} invader={invader}/>
+              <InvaderComponent onClick={() => setCurrentInvader(invader)} key={invader.name} invader={invader}/>
             )}
           </div>
+          { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => setCurrentInvader(null)}/>}
         </div>
       )}
     </div>

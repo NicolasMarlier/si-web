@@ -3,95 +3,97 @@
     top: 0;
     left: 0;
     z-index: 10;
-
-    .menu-toggle-button {
-        display: none;
-        width: 1em;
-        height: 1em;
-        text-align: center;
-        line-height: 0.85em;
-        font-size: 4em;
-        z-index: 11;
-    }
+    width: 80px;
+    bottom: 0;
+    background: white;
+    border-right: 1px solid #ddd;
+    
 
     .menu-container {
-        background: #111111;
-        z-index: 10;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 75%;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        text-align: center;
+        padding: 0 4px;
+        height: 100%;
 
         .logo-container {
-        position: absolute;
-        top: 1em;
-        width: 100%;
-        
-        img {
-            display: inline-block;
-            width: 70%;
-        }
+            position: absolute;
+            top: 4px;
+            width: 74px;
+            height: 74px;
+            left: 4px;
+            mask: url(icons/invader.svg) no-repeat center;
+            background-color: #ffcc0066;
         }
         
         .summary {
-        font-size: 2em;
-        margin: 0 0 2em 0;
-        }
+            font-size: 1.2em;
+            margin: 0 0 2em 0;
+            text-align: center;
+            font-weight: 800;
 
-        label input {
-            visibility: hidden;
-        }
-
-        .btn {
-            border: none !important;
-            color: #ffcc00aa !important;
-            font-size: 1.5em;
-
-            &.if-selected {
-                display: none;
+            .small {
+                font-weight: 400;
+                margin-top: -5px;
+                letter-spacing: 1px;
             }
-
-            &:hover {
-                color: #ffcc00 !important;
-            }
-            &.active {
-                font-weight: bold;
-                color: #ffcc00 !important;
-            }
-        }
-
-        .buttons {
-            position: absolute;
-            bottom: 1em;
-
-            .save-button {
-                width: 50%;
-
-                img {
-                width: 100%;
-                }
-            } 
         }
     }
 }
 
 @media screen and (max-width:640px) {
     .menu {
-        .menu-toggle-button {
-            display: block;
-            position: fixed;
-        }
-        .menu-container {
-            display: none;
+        display: fixed;
+        z-index: 10;
+        bottom: 0;
+        height: 54px;
+        background: #fff;
+        border-right: none;
+        border-top: 1px solid #ddd;
+        left: 0;
+        right: 0;
+        top: auto;
+        width: auto;
 
-            &.show {
-                display: flex;
-                right: 0;
+
+        .menu-container {
+            position: static;
+            background: none;
+            display: flex;
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 0;;
+
+            
+            
+            .logo-container {
+                display: none;
+            }
+
+            .summary {
+                display: none !important;
+            }
+
+            .btn {
+                
+                display: block;
+                text-transform: uppercase;
+                font-weight: 600;
+                font-size: 1em;
+                border-radius: 0.4em;
+                margin: 0.5em 0.6em;
+                padding: 0;
+
+                &.no-mobile {
+                    display: none;
+                }
+
+                
+            }
+
+            .buttons {
+                display: none;
             }
         }
     }

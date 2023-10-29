@@ -14,15 +14,13 @@ const loader = new Loader({
 
 const Map = () => {
     const [googleLoaded, setGoogleLoaded] = useState(false)
-
-    const [currentHint, setCurrentHint] = useState(null as Hint | null)
     
     
     const [markers, setMarkers] = useState([] as google.maps.Marker[])
     const [hintMarkers, setHintMarkers] = useState([] as google.maps.Marker[])
     const map = useRef(undefined as google.maps.Map | undefined)
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
-    const { hints, invaders, moveInvader, deleteHint, setLoadingMap, currentGeoLocation, currentOrientation, fetchHints } = useContext(AppContext)
+    const { hints, invaders, moveInvader, deleteHint, setCurrentHint, currentHint, setLoadingMap, currentGeoLocation, currentOrientation, fetchHints } = useContext(AppContext)
     const [currentPosition, setCurrentPosition] = useState(currentGeoLocation as Position)
 
 
@@ -43,16 +41,6 @@ const Map = () => {
         "/place-hint": 13
     }[location.pathname] || 13
 
-    const placeHint = async() => {
-        await ApiClient.insertHint({
-            description: "Bla",
-            position: currentPosition,
-            placed_at: (new Date()).toString()
-        })
-        await fetchHints()
-        setCurrentHint(_.maxBy(hints, 'id') || null)
-        map.current?.setCenter(currentPosition)
-    }
 
     const deleteCurrentHint = () => {
         if(currentHint) {
@@ -72,7 +60,7 @@ const Map = () => {
                 }
         })
         await fetchHints()
-        setCurrentHint(_.find(hints, {id: currentHint.id}) || null)
+        setCurrentHint(null)
     }
 
     useEffect(() => {
@@ -248,8 +236,8 @@ const Map = () => {
                     let marker = new google.maps.Marker({
                         position: invader.position,
                         icon: {
-                            url: invader.hosted_image_30_url,
-                            // scaledSize: new google.maps.Size(30, 30),
+                            url: invader.hosted_image_300_url,
+                            scaledSize: new google.maps.Size(30, 30),
                             anchor: new google.maps.Point(10, 10),
                         },
                         draggable:editMode,
@@ -281,7 +269,7 @@ const Map = () => {
                         map: map.current,
                     });
                     marker.addListener('click', () => {
-                        map.current?.setCenter(hint.position)
+                        map.current?.panTo(hint.position)
                         setCurrentHint(hint)
                     })
                     // if(editMode) {
@@ -305,9 +293,6 @@ const Map = () => {
             onUpdateDescription={onUpdateDescription}
             />
         }
-        { !currentHint && <div className="buttons">
-            <div className="btn" onClick={placeHint}>Placer un indice</div>
-        </div>}
     </div>
 }
 

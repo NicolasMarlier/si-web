@@ -1,5 +1,6 @@
 import { createContext, useEffect, useState } from 'react';
 import ApiClient from "./ApiClient"
+import _ from 'lodash';
 
 interface Context {
     hints: Hint[]
@@ -14,17 +15,24 @@ interface Context {
     loading: boolean
     loadingMap: boolean
     loadingLocation: boolean
+    shouldAskGeoPermissionStatus: boolean
+    currentHint: Hint | null,
+    setCurrentHint: (hint: Hint | null) => void
+    newHint: (position: Position) => void
     
     setLoadingMap: (loaded: boolean) => void
     deleteHint: (hint: Hint) => void
     syncInvadersFromOfficialApi: () => void    
     setLoadingHints: (loading: boolean) => void
+    status: string
+    fetchPermissions: () => void
 }
 export const AppContext = createContext({
     initialLoading: true
 } as Context);
 
 export const AppProvider = ({ children }: any) => {
+    const [status, setStatus] = useState("")
     const [hints, setHints] = useState([] as Hint[])
     const [initialLoading, setInitialLoading] = useState(true)
     const [loadingHints, setLoadingHints] = useState(true)
@@ -32,9 +40,14 @@ export const AppProvider = ({ children }: any) => {
     const [loadingMap, setLoadingMap] = useState(true)
     const [loadingLocation, setLoadingLocation] = useState(true)
     const [loading, setLoading] = useState(true)
+    const [hintWasJustAdded, setHintWasJustAdded] = useState(false)
+
+    const [currentHint, setCurrentHint] = useState(null as Hint | null)
 
     const [currentGeoLocation, setCurrentGeoLocation] = useState({} as GeoPosition)
     const [currentOrientation, setCurrentOrientation] = useState(0)
+
+    const [shouldAskGeoPermissionStatus, setShouldAskGeoPermissionStatus] = useState(false)
     
     const [timer, setTimer] = useState(0)
     const [invaders, setInvaders] = useState([] as Invader[])
@@ -49,23 +62,54 @@ export const AppProvider = ({ children }: any) => {
         requestPermission?: () => Promise<'granted' | 'denied'>;
       }
       
+    const fetchPermissions = async() => {
+        const geoLocationState = (await navigator.permissions.query({ name: "geolocation" })).state
+        const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
+        const iOS = typeof requestPermission === 'function';
+        let orientationState = ""
+        if (iOS) {
+            orientationState = await requestPermission()
+            window.addEventListener("deviceorientation", function (event) {
+                setCurrentOrientation(Math.round((event as any).webkitCompassHeading || 0))
+            });
+        }
+        
+        if(geoLocationState === "prompt") {//|| (iOS && orientationState !== "granted")) {
+            setShouldAskGeoPermissionStatus(false)
+        }
+    }
     useEffect(() => {
-        navigator.permissions.query({ name: "geolocation" }).then((result) => {
-            const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
-            const iOS = typeof requestPermission === 'function';
-            if (iOS) {
-                requestPermission().then((response2) => {
-                    window.addEventListener("deviceorientation", function (event) {
-                        setCurrentOrientation(Math.round((event as any).webkitCompassHeading || 0))
-                    });
-                })
-            }
-        })
+        fetchPermissions()
     }, [])
+
+    const newHint = async(position: Position) => {
+        setHintWasJustAdded(true)
+        await ApiClient.insertHint({
+            description: "",
+            position: position,
+            placed_at: (new Date()).toString()
+        })
+        await fetchHints()
+    }
+    useEffect(() => {
+        if(hintWasJustAdded) {
+            setCurrentHint(_.maxBy(hints, 'id') || null)
+            setHintWasJustAdded(false)
+        }
+    }, [hints])
 
     
 
     const fetchGeoLocation = () => {
+        navigator.geolocation.getCurrentPosition(position => {
+            setLoadingLocation(false)
+            setCurrentGeoLocation({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+                heading: position.coords.heading,
+            })
+        })
+
         return navigator.geolocation.watchPosition((position) => {
             setLoadingLocation(false)
             setCurrentGeoLocation({
@@ -81,7 +125,7 @@ export const AppProvider = ({ children }: any) => {
             const watchID = fetchGeoLocation()
             return () => navigator.geolocation.clearWatch(watchID);;
         }
-    }, [navigator.geolocation]);
+    }, [navigator.geolocation, shouldAskGeoPermissionStatus]);
 
     useEffect(() => {
         if(initialLoading) {
@@ -89,11 +133,12 @@ export const AppProvider = ({ children }: any) => {
                 loadingLocation ||
                 loadingHints ||
                 loadingInvaders ||
-                loadingMap
+                loadingMap ||
+                shouldAskGeoPermissionStatus
             )
         }
         
-    }, [loadingLocation, loadingHints, loadingInvaders, loadingMap])
+    }, [loadingLocation, loadingHints, loadingInvaders, loadingMap, shouldAskGeoPermissionStatus])
 
     useEffect(() => {
         setLoading(loadingHints || loadingInvaders)
@@ -102,24 +147,24 @@ export const AppProvider = ({ children }: any) => {
       
     const fetchHints = () => {
         setLoadingHints(true)
-        ApiClient.listHints().then(hints => {
+        return ApiClient.listHints().then(newHints => {
             setLoadingHints(false)
-            setHints(hints)
+            setHints(newHints)
         })
     }
 
     const fetchInvaders = () => {
         setLoadingInvaders(true)
-        ApiClient.listInvaders().then(invaders => {
+        return ApiClient.listInvaders().then(newInvaders => {
             setLoadingInvaders(false)
-            setInvaders(invaders)
+            setInvaders(newInvaders)
         })
     }
 
     const deleteHint = (hint: Hint) => {
         setLoadingHints(true)
         if(hint.id) {
-            ApiClient.deleteHint(hint.id).then(fetchHints)
+            return ApiClient.deleteHint(hint.id).then(fetchHints)
         }
     }
 
@@ -151,7 +196,13 @@ export const AppProvider = ({ children }: any) => {
         loadingMap,
         loadingLocation,
         syncInvadersFromOfficialApi,
-        setLoadingHints
+        setLoadingHints,
+        status,
+        fetchPermissions,
+        shouldAskGeoPermissionStatus,
+        currentHint,
+        setCurrentHint,
+        newHint
     }
  
     return (

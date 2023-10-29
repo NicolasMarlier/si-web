@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
 
 html, body {
   height: 100%;
@@ -7,7 +5,7 @@ html, body {
   padding: 0;
   background: #111111;
   
-  font-family: 'VT323', monospace;
+  font-family: sans-serif;
   color: #ffcc00;
 
   #root {
@@ -17,8 +15,11 @@ html, body {
       height: 100%;
 
       .MainFrame {
-        width: 75%;
+        width: 100%;
+        margin-left: 80px;
         position: relative;
+        background-color: #fff;
+        overflow-x: hidden;
       }
 
       .small {
@@ -42,9 +43,68 @@ html, body {
     #root {
       .App, .TotalFrame {
         .MainFrame {
-          width: 100%
+          margin: 0;
         }
       }
+    }
+  }
+}
+
+
+.btn {
+  color: #999999;
+  border: 2px solid #999999;
+  font-size: 1.5em;
+  margin: 10px;
+  padding: 0;
+  width: max-content;
+
+  .icon {
+      width: 50px;
+      height: 50px;
+      mask-size: 2em;
+
+      background-color: #999999;
+
+      &.map {
+          mask: url(icons/map.svg) no-repeat center;
+      }
+      &.collection {
+          mask: url(icons/collection.svg) no-repeat center;
+      }
+      &.new-hint {
+          mask: url(icons/new-hint.svg) no-repeat center;
+      }
+      &.sync {
+        mask: url(icons/sync.svg) no-repeat center;
+      }
+      &.logout {
+          mask: url(icons/logout.svg) no-repeat center;
+      }
+  }
+
+  &:hover {
+      border: 2px solid #ffcc00;
+      .icon {
+          background-color: #ffcc00;
+      }
+  }
+
+  &.active {
+      border: 2px solid #ffcc00;
+      .icon {
+          background-color: #ffcc00;
+      }
+  }
+
+}
+
+@media screen and (max-width:640px) {
+  .btn {
+    .icon {
+      width: 30px;
+      height: 30px;
+      mask-size: 1.4em;
     }
   }
 }

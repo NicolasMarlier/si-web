@@ -7,10 +7,11 @@ import { NavLink } from 'react-router-dom'
 import ApiClient from './ApiClient'
 import { AppContext } from "./AppProvider"
 import _ from "lodash"
+import mapIcon from './icons/map.svg'
 
 
 const Menu = () => {
-    const { loading, invaders, syncInvadersFromOfficialApi } = useContext(AppContext)
+    const { loading, invaders, syncInvadersFromOfficialApi, newHint, currentGeoLocation } = useContext(AppContext)
 
     const totalPoints = _.sum(_.map(invaders, "point")) + _.keys(_.groupBy(invaders, "city_id")).length * 100
     const totalFlashedCount = invaders.length
@@ -32,49 +33,53 @@ const Menu = () => {
 
     return (
         <div className="menu">
-            <div className="menu-toggle-button"
-                onClick={toggleMenu}>≡</div>
-            <div className={`menu-container ${showMenuMobile ? 'show' : ''}`}>
-                <div className="logo-container">
-                    <img src={invaderLogo}/>
-                </div>
+            <div className="menu-container">
+                <div className="logo-container"/>
 
-                <div className="summary d-flex flex-row justify-content-center">
-                    <div className="p-2">{totalPoints}<span className="small"> pts</span></div>
-                    <div className="p-2">{totalFlashedCount}<span className="small"> flashés</span></div>
+                <div className="summary">
+                    <div className="p-2">{totalPoints}<div className="small">points</div></div>
+                    <div className="p-2">{totalFlashedCount}<div className="small">flashés</div></div>
                 </div>
                 
                 <NavLink
                     to="/collection"
                     className="btn"
                     onClick={onClickNav}>
-                        &gt;&gt; COLLECTION &lt;&lt;
+                        <div className="icon collection"/>
                 </NavLink>
                 <NavLink
                     to="/map"
                     className="btn"
                     onClick={onClickNav}>
-                        &gt;&gt; CARTE &lt;&lt;
+                        <div className="icon map"/>
                 </NavLink>
-                <NavLink
+                
+                {/* <NavLink
                     to="/place"
-                    className="btn"
+                    className="btn no-mobile"
                     onClick={onClickNav}>
                         &gt;&gt; PLACE &lt;&lt;
                 </NavLink>
 
                 <NavLink
                     to="/place-hint"
-                    className="btn"
+                    className="btn no-mobile"
                     onClick={onClickNav}>
                         &gt;&gt; PLACE HINT &lt;&lt;
-                </NavLink>
+                </NavLink> */}
 
-                <div className="buttons">
-                    <div className="btn save-button" onClick={ApiClient.logout}>LOGOUT</div>
-                    <div className="btn save-button" onClick={clickSync}>SYNC</div>
-                    { loading && <div>Loading...</div>}
+                <div className="btn" onClick={() => newHint(currentGeoLocation)}>
+                    <div className="icon new-hint"/>
                 </div>
+
+                <div className="btn" onClick={ApiClient.logout}>
+                    <div className="icon logout"/>
+                </div>
+
+                <div className="btn" onClick={clickSync}>
+                    <div className="icon sync"/>
+                </div>
+
             </div>
         </div>
     )

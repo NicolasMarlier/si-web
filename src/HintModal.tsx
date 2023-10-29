@@ -14,11 +14,13 @@ const HintModal = (props: Props) => {
     useEffect(() => {
         setCurrentDescription(description)
     },[description])
-    
+
     return <div className="hint-modal">
-        <input value={ currentDescription }
+        <input
+            value={ currentDescription }
             onChange={(e) => setCurrentDescription(e.currentTarget.value)}
-            onBlur={(e) => onUpdateDescription(currentDescription)}/>
+            />
+        <div className="btn" onClick={() => onUpdateDescription(currentDescription)}>save</div>
         <div className="btn" onClick={onDelete}>DELETE</div>
     </div>
 }
