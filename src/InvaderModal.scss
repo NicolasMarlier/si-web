@@ -1,0 +1,62 @@
+.invader-modal {
+    position: fixed;
+    bottom: 0px;
+    right: 0;
+    left: 80px;
+    height: 80px;
+    color: #444;
+
+    background: #fff;
+    z-index: 1000;
+    display: flex;
+    border-top: 1px solid #ddd;
+    padding: 0.2em;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 1em;
+
+    .name {
+        font-size: 1.2em;
+    }
+
+    .btn {
+        &.green {
+            border-color: green;
+            .icon {
+                background-color: green;
+            }
+        }
+
+        &.red {
+            border-color: red;
+            .icon {
+                background-color: red;
+            }
+        }
+
+        &.hide {
+            visibility: hidden;
+        }
+    }
+}
+
+@media screen and (max-width:640px) {
+    .invader-modal {
+        position: fixed;
+        bottom: 0px;
+        right: 0;
+        left: 0;
+        height: 60px;
+
+        input {
+            margin: 0 0.4em 0 0;
+            line-height: 1em;
+            padding: 0.4em 0.4em;
+        }
+    }
+
+    
+}

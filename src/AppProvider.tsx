@@ -47,6 +47,7 @@ export const AppProvider = ({ children }: any) => {
     const [loadingInvaders, setLoadingInvaders] = useState(true)
     const [loadingMap, setLoadingMap] = useState(true)
     const [loadingLocation, setLoadingLocation] = useState(true)
+
     const [loading, setLoading] = useState(true)
     const [hintWasJustAdded, setHintWasJustAdded] = useState(false)
 
@@ -63,6 +64,7 @@ export const AppProvider = ({ children }: any) => {
     useEffect(() => {
         fetchHints()
         fetchInvaders()
+        fetchPermissions()
         setTimer(timer + 1)
     }, [])
 
@@ -86,9 +88,7 @@ export const AppProvider = ({ children }: any) => {
             setShouldAskGeoPermissionStatus(false)
         }
     }
-    useEffect(() => {
-        fetchPermissions()
-    }, [])
+
 
     const newHint = async(position: Position) => {
         setHintWasJustAdded(true)
@@ -164,7 +164,7 @@ export const AppProvider = ({ children }: any) => {
                 loadingLocation ||
                 loadingHints ||
                 loadingInvaders ||
-                loadingMap ||
+                // loadingMap ||
                 shouldAskGeoPermissionStatus
             )
         }
@@ -210,7 +210,7 @@ export const AppProvider = ({ children }: any) => {
             ...invader,
             ...{position}
         })
-        return fetchInvaders
+        return fetchInvaders()
     }
 
     const context = {

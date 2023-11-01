@@ -13,6 +13,7 @@ import InitialLoading from './InitialLoading';
 import Collection from './Collection';
 
 
+
 const App:React.FC = () => {
   const { initialLoading, loadingLocation } = useContext(AppContext)
 
@@ -21,12 +22,10 @@ const App:React.FC = () => {
       <div className="App">
         { initialLoading && <InitialLoading/> }
         { 
-        <div className="TotalFrame d-flex flex-row justify-content-end">
-          <Menu/>
-
+         !initialLoading && <div className="TotalFrame d-flex flex-row justify-content-end">
           <div className="MainFrame h-100">
             <Outlet/>
-            { !loadingLocation && <Map/>}
+            <Map/>
           </div>
         </div>
       }

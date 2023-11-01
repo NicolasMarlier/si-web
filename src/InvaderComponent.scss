@@ -12,35 +12,22 @@
     background: #000000bb;
     font-size: 1.5em;
 }
-/* .invader:hover .hover{
-    visibility: visible;
-} */
-/* .invader:hover img {
-    filter: grayscale(100%);
-} */
-
 .invader .unknown-position-indicator {
     position: absolute;
     z-index: 2;
-    top: 0.2em;
-    right: 0.2em;
-    width: 0.9em;
-    height: 0.9em;
-    background-color: #ff6400;
+    right: 0;
+    top: 0;
+    width: 30px;
+    height: 30px;
+    background-color: #ff4422;
+    border: 0 0 30px 30px;
+    
     text-align: center;
     font-size: 2em;
-    border-radius: 0.45em;
     color: white;
     line-height: 0.85em;
 
-    .name {
-
-    }
-    .score {
-        font-size: 4em;
-        font-family: 'DotGothic16', sans-serif;
-    }
-    .flashed-at, .built-at {
-        font-size: 0.7em;
-    }
+    border-left: 30px solid #ff4422;
+    border-top: 30px solid white;
+    border-radius: 0 0 0 8px;
 }

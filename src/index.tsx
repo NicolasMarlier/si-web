@@ -4,6 +4,7 @@ import './index.css';
 import App from './App';
 import Collection from './Collection'
 import Login from './Login'
+import SettingsPage from './SettingsPage'
 
 import reportWebVitals from './reportWebVitals';
 
@@ -41,8 +42,8 @@ const router = createBrowserRouter(
           path="place"
           element={<div/>}/>
         <Route
-          path="place-hint"
-          element={<div/>}/>
+          path="settings"
+          element={<SettingsPage/>}/>
         
       </Route>
     </Route>
@@ -52,10 +53,10 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+  <RouterProvider router={router} />
 );
+
+// </React.StrictMode>
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))

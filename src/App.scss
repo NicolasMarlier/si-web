@@ -97,6 +97,18 @@ html, body {
       &.save {
         mask: url(icons/save.svg) no-repeat center;
       }
+      &.flash {
+        mask: url(icons/flash.svg) no-repeat center;
+      }
+      &.trowel {
+        mask: url(icons/trowel.svg) no-repeat center;
+      }
+      &.marker {
+        mask: url(icons/marker.svg) no-repeat center;
+      }
+      &.settings {
+        mask: url(icons/settings.svg) no-repeat center;
+      }
   }
 
   &:hover {

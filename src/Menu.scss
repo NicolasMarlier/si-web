@@ -16,27 +16,18 @@
         padding: 0 4px;
         height: 100%;
 
-        .logo-container {
-            position: absolute;
-            top: 4px;
-            width: 74px;
-            height: 74px;
-            left: 4px;
-            mask: url(icons/invader.svg) no-repeat center;
-            background-color: #ffcc0066;
+        .nav-items {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            flex: 0 0 50%;
         }
-        
-        .summary {
-            font-size: 1.2em;
-            margin: 0 0 2em 0;
-            text-align: center;
-            font-weight: 800;
 
-            .small {
-                font-weight: 400;
-                margin-top: -5px;
-                letter-spacing: 1px;
-            }
+        .action-items {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            flex: 0 0 50%;
         }
     }
 }
@@ -63,7 +54,19 @@
             flex-direction: row;
             align-items: flex-start;
             justify-content: space-between;
-            padding: 0;;
+            padding: 0;
+
+            .nav-items {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-start;
+            }
+    
+            .action-items {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+            }
 
             
             

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import _ from "lodash"
 import InvaderComponent from './InvaderComponent';
@@ -6,59 +6,41 @@ import { useOutletContext } from 'react-router-dom';
 import "./Collection.scss"
 import { AppContext } from './AppProvider';
 import InvaderZoomedComponent from './InvaderZoomedComponent';
+import Menu from "./Menu"
+
+type Mode = "date_pos" | "date_flash"
 
 const Collection = () => {
   const { invaders } = useContext(AppContext)
-  const mode = "date_pos"
+  const [sortedInvaders, setSortedInvaders] = useState([] as Invader[])
+  const [mode, setMode] = useState("date_pos" as Mode)
   const [currentInvader, setCurrentInvader] = useState(null as Invader | null)
 
-  const sortedInvaderGroups = () => {
-    // if(mode === "day_flash") {
-    //   return _.orderBy(
-    //     _.map(
-    //       _.groupBy(invaders, ({date_flash}) => date_flash.substring(0, 10)),
-    //       v => {
-    //         return {
-    //           name: moment(v[0].date_flash.substring(0, 10)).locale("fr").format('dddd D MMMM YYYY'),
-    //           invaders: _.orderBy(v, "date_flash", 'desc')
-    //         }
-    //       }
-    //     ),
-    //     ({invaders: invaders}) => invaders[0].date_flash,
-    //     'desc'
-    //   )
-    // }
-    // else
-    if(mode === "date_pos") {
-      return [{
-        name: "",
-        invaders: _.sortBy(invaders, "date_pos")
-      }]
-    }
-    else {
-      return []
-    }
-  }
+  useEffect(() => {
+    setSortedInvaders(_.sortBy(invaders, mode).reverse())
+  }, [mode, invaders])
 
   return (
-    <div className="Collection">
-      { sortedInvaderGroups().map(
-        ({name, invaders}) => <div key={name} className="invader-group">
-          <h2 className="stats">
-            <div className="stat">{_.sum(_.map(invaders, "point"))}<span className="small"> pts</span></div>
-            <div className="stat">{invaders.length}<span className="small"> flashés</span></div>
-            
-            <div className="stat"><span className="small">{name.toUpperCase()}</span></div>
-          </h2>
-          <div className="invader-items">
-            { invaders.map(invader => 
-              <InvaderComponent onClick={() => setCurrentInvader(invader)} key={invader.name} invader={invader}/>
-            )}
-          </div>
-          { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => setCurrentInvader(null)}/>}
+    <div>
+      <div className="collection">
+        { sortedInvaders.map(invader =>
+          <InvaderComponent
+            onClick={() => setCurrentInvader(invader)}
+            key={invader.name}
+            invader={invader}/>
+        )}
+      </div>
+      { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => setCurrentInvader(null)}/>}
+      <Menu>
+        <div className={`btn round ${mode=='date_pos' ? 'active' : ''}`} onClick={() => setMode("date_pos") }>
+          <div className="icon trowel"></div>
         </div>
-      )}
+        <div className={`btn round ${mode=='date_flash' ? 'active' : ''}`} onClick={() => setMode("date_flash") }>
+          <div className="icon flash"></div>
+        </div>
+      </Menu>
     </div>
+    
   );
 }
 
