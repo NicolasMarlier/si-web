@@ -1,11 +1,11 @@
 import React from "react";
 import "./InvaderSelector.css"
 
-const InvaderSelector:React.FC<{onSelect: (invader: Invader) => void, invaders: Invader[], selectedInvader: Invader | undefined}> = (props) => {
-    const {invaders, onSelect, selectedInvader} = props
+const InvaderSelector:React.FC<{onSelect: (invader: Invader) => void, invaders: Invader[]}> = (props) => {
+    const {invaders, onSelect} = props
     return <div className="invader-selector">
         { invaders.map(invader => 
-            <div className={selectedInvader && selectedInvader.name === invader.name ? "selected" : ""}
+            <div
                 key={invader.name}
                 onClick={() => onSelect(invader)}>
                 <img src={invader.hosted_image_300_url} className="w-100"/>

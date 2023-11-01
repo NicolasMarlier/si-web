@@ -3,9 +3,9 @@ import { useContext, useState, PropsWithChildren} from "react"
 
 
 import { NavLink } from 'react-router-dom'
-import ApiClient from './ApiClient'
 import { AppContext } from "./AppProvider"
 import _ from "lodash"
+import loadingGif from './icons/loading.gif'
 
 
 const Menu = (props: PropsWithChildren) => {
@@ -39,6 +39,7 @@ const Menu = (props: PropsWithChildren) => {
                         className="btn no-mobile">
                             <div className="icon marker"/>
                     </NavLink>
+                    { loading && <img className="loading" src={loadingGif}/>}
                 </div>
                 <div className="action-items">
                     { children }

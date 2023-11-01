@@ -7,7 +7,7 @@ import HintModal from "./HintModal"
 import ApiClient from "./ApiClient"
 import InvaderModal from "./InvaderModal"
 import Menu from "./Menu"
-
+import InvaderSelector from "./InvaderSelector"
 
 const positionMarkerIcon ={
     path: "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1",
@@ -215,11 +215,12 @@ const Map = () => {
     
     useEffect(() => {
         if(map.current) {
-            console.log("Set all markers. ")
-            _.each(invaderMarkers.current, marker => marker.setMap(null))
-            invaderMarkers.current = _.mapValues(
-                _.keyBy(_.filter(invaders, "position"), 'name'),
-                invader => {
+            invaderMarkers.current ||= {}
+            _.filter(invaders, "position").forEach(invader => {
+                if(invaderMarkers.current[invader.name]) {
+                    invaderMarkers.current[invader.name].setPosition(invader.position)
+                }
+                else {
                     let marker = new google.maps.Marker({
                         position: invader.position,
                         icon: invaderIcon(invader, {selected: selectedInvaderReference.current?.name === invader.name}),
@@ -230,9 +231,9 @@ const Map = () => {
                         setSelectedInvaderPosition({lat: e.latLng.lat(), lng: e.latLng.lng()})
                     })
                     marker.addListener("click", () => setSelectedInvader(invader))
-                    return marker
+                    invaderMarkers.current[invader.name] = marker
                 }
-            )
+            })
         }
     }, [invaders, map.current])
 
@@ -339,12 +340,16 @@ const Map = () => {
         console.log(`editMode changed: ${editMode}`)
     }, [editMode])
     
+    const invadersToPosition = invaders.filter(i => !i.position)
 
     return <div
         id="map-container"
         className={ containerClass }>
         <div id="map"/>
         <div id="pano"/>
+        { invadersToPosition && <InvaderSelector
+            invaders={invadersToPosition}
+            onSelect={(i) => moveInvader(i, currentPosition)}/>}
         { currentHint && <HintModal
             hint={currentHint}
             onDelete={deleteCurrentHint}

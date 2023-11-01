@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from 'react'
 
 import _ from "lodash"
 import InvaderComponent from './InvaderComponent';
-import { useOutletContext } from 'react-router-dom';
 import "./Collection.scss"
 import { AppContext } from './AppProvider';
 import InvaderZoomedComponent from './InvaderZoomedComponent';
@@ -13,7 +12,7 @@ type Mode = "date_pos" | "date_flash"
 const Collection = () => {
   const { invaders } = useContext(AppContext)
   const [sortedInvaders, setSortedInvaders] = useState([] as Invader[])
-  const [mode, setMode] = useState("date_pos" as Mode)
+  const [mode, setMode] = useState("date_flash" as Mode)
   const [currentInvader, setCurrentInvader] = useState(null as Invader | null)
 
   useEffect(() => {

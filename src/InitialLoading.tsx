@@ -10,7 +10,6 @@ const InitialLoading = () => {
         <div className="main-message">LOADING</div>
         { loadingLocation && "Locating you..."}
         { loading && "Getting invaders..."}
-        { loadingMap && "Loading map..."}
         { status }
 
         { shouldAskGeoPermissionStatus && <div onClick={fetchPermissions}>Give access to GPS</div> }
