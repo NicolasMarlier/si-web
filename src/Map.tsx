@@ -374,6 +374,7 @@ const Map = () => {
                 const gPosition = results[0].geometry.location
                 positionMarker.current?.setPosition(gPosition)
                 panorama.current?.setPosition(gPosition)
+                map.current?.setCenter(gPosition)
                 setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
             }
         });
