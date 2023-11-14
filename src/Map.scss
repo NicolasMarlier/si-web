@@ -19,9 +19,25 @@
         bottom: 0;
     }
 
+    #search {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+
+        input {
+            border-radius: 0.3em;
+            border: 1px solid #ccc;
+            padding: 0.5em;
+            width: 400px;
+        }
+    }
+
     &.full-map {
         display: block;
         #pano {
+            display: none;
+        }
+        #search {
             display: none;
         }
     }
@@ -32,13 +48,7 @@
         #pano {
             display: block;
         }
-    }
-    &.map-pano-and-hints {
-        #map {
-            bottom: 50%;
-            left: 10%;
-        }
-        #pano {
+        #search {
             display: block;
         }
     }

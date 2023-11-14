@@ -18,8 +18,9 @@ const positionMarkerIcon ={
     scale: 2
 };
 
+const circlePath = "M 100 100 M -75 0 A 75 75 0 1 0 150 0 A 75,75 0 1,0 -150 0"
 const hintIcon = {
-    path: google.maps.SymbolPath.CIRCLE,
+    path: circlePath,
     fillColor: "#22ff3366",
     fillOpacity: 1.0,
     strokeWeight: 0,
@@ -28,7 +29,7 @@ const hintIcon = {
 }
 
 const selectedHintIcon = {
-    path: google.maps.SymbolPath.CIRCLE,
+    path: circlePath,
     fillColor: "#22ff3366",
     fillOpacity: 1.0,
     strokeColor: "#22ff33",
@@ -41,6 +42,7 @@ const Map = () => {
     const invaderMarkers = useRef({} as {[key: string]: google.maps.Marker})
     const hintMarkers = useRef({} as {[key: string]: google.maps.Marker})
     const map = useRef(undefined as google.maps.Map | undefined)
+    const placesService = useRef(undefined as any | undefined)
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
     const panorama = useRef(undefined as google.maps.StreetViewPanorama | undefined)
 
@@ -60,7 +62,7 @@ const Map = () => {
     const clickOnMap = (e: any) => {
         setCurrentHint(null)
         setSelectedInvader(null)
-        console.log("HEHO !", editMode)
+
         if(editMode) {
             const gPosition = e.latLng
             positionMarker.current?.setPosition(gPosition)
@@ -104,53 +106,64 @@ const Map = () => {
     }
 
     useEffect(() => {
-        
-        map.current = new google.maps.Map(document.getElementById("map") as HTMLElement, {
-            center: currentGeoLocation,
-            zoom: defaultZoom,
-            disableDefaultUI: true,
-            clickableIcons: false,
-            mapTypeId: google.maps.MapTypeId.ROADMAP,
-            styles: [
-                {
-                    featureType: "all",
-                    elementType: "all",
-                    stylers: [
-                        {
-                            "saturation": -100
-                        }
-                    ]
-                },
-                {
-                    featureType: "poi",
-                    elementType: "all",
-                    stylers: [
-                        {
-                            "visibility": "off"
-                        }
-                    ]
+
+        const initAll = async() => {
+            //@ts-ignore
+            const { Map } = await google.maps.importLibrary("maps") as google.maps.MapsLibrary;
+            //@ts-ignore
+            const { PlacesService } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
+
+
+            map.current = new Map(document.getElementById("map") as HTMLElement, {
+                center: currentGeoLocation,
+                zoom: defaultZoom,
+                disableDefaultUI: true,
+                clickableIcons: false,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                styles: [
+                    {
+                        featureType: "all",
+                        elementType: "all",
+                        stylers: [
+                            {
+                                "saturation": -100
+                            }
+                        ]
+                    },
+                    {
+                        featureType: "poi",
+                        elementType: "all",
+                        stylers: [
+                            {
+                                "visibility": "off"
+                            }
+                        ]
+                    }
+                ]
+            })
+    
+            placesService.current = new PlacesService(map.current);
+            
+            positionMarker.current = new google.maps.Marker({
+                position: currentPosition,
+                icon: positionMarkerIcon,
+                map: map.current
+            });
+    
+            initPanorama()
+            positionMarker.current?.setDraggable(editMode);
+            positionMarker.current?.addListener(
+                "dragend",
+                (e: any) => {
+                    const gPosition = e.latLng
+                    panorama.current?.setPosition(gPosition)
+                    setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
                 }
-            ]
-        })
-        
-        positionMarker.current = new google.maps.Marker({
-            position: currentPosition,
-            icon: positionMarkerIcon,
-            map: map.current
-        });
-
-        initPanorama()
-        positionMarker.current?.setDraggable(editMode);
-        positionMarker.current?.addListener(
-            "dragend",
-            (e: any) => {
-                const gPosition = e.latLng
-                panorama.current?.setPosition(gPosition)
-                setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
-            }
-        )
-
-        setLoadingMap(false)
+            )
+    
+            setLoadingMap(false)
+        }
+        initAll()
     }, [])
 
     const initPanorama = () => {
@@ -342,11 +355,41 @@ const Map = () => {
     
     const invadersToPosition = invaders.filter(i => !i.position)
 
+    const searchPlace = (e: React.SyntheticEvent) => {
+        e.preventDefault()
+        const target = e.target as typeof e.target & {
+            query: { value: string };
+        };
+        const query = target.query.value;
+
+        const request = {
+            query,
+            fields: ['name', 'geometry']
+        }
+
+        placesService.current?.findPlaceFromQuery(request, function(results: any, status: any) {
+            console.log(results, status)
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+            
+                const gPosition = results[0].geometry.location
+                positionMarker.current?.setPosition(gPosition)
+                panorama.current?.setPosition(gPosition)
+                setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
+            }
+        });
+        
+    }
+
     return <div
         id="map-container"
         className={ containerClass }>
         <div id="map"/>
         <div id="pano"/>
+        <div id="search">
+            <form onSubmit={searchPlace}>
+                <input name="query"/>
+            </form>
+        </div>
         { invadersToPosition && <InvaderSelector
             invaders={invadersToPosition}
             onSelect={(i) => moveInvader(i, currentPosition)}/>}
