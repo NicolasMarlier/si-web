@@ -1,5 +1,5 @@
 const requestPermissionGeoLocation = () =>
-        navigator.permissions.query({ name: "geolocation" })
+    navigator.permissions.query({ name: "geolocation" })
     
 const requestPermissionDeviceOrientation = async() => {
     interface DeviceOrientationEventiOS extends DeviceOrientationEvent {

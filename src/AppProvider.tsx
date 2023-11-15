@@ -33,6 +33,7 @@ interface Context {
     setLoadingHints: (loading: boolean) => void
     status: string
     fetchPermissions: () => void
+    fetchGeoLocation: () => void
 }
 export const AppContext = createContext({
     initialLoading: true
@@ -99,18 +100,23 @@ export const AppProvider = ({ children }: any) => {
     
     
     const fetchGeoLocation = () => {
+        setStatus(`${status} | fetchGeo called`)
         const cached_current_position = Cache.get(Cache.KEY_CURRENT_POSITION)
-        if(cached_current_position) {
+        if(cached_current_position && loadingLocation) {
             setLoadingLocation(false)
             setCurrentGeoLocation(cached_current_position)
         }
+
         navigator.geolocation.getCurrentPosition(position => {
+            setStatus(`${status} > ${position}`)
             setLoadingLocation(false)
             setCurrentGeoLocation({
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
                 heading: position.coords.heading,
             })
+        }, error => {
+            setStatus(`${status} < ${error.message}`)
         })
 
         setTimeout(() => {
@@ -131,6 +137,8 @@ export const AppProvider = ({ children }: any) => {
                 lng: position.coords.longitude,
                 heading: position.coords.heading,
             })
+        }, (error) => {
+            setStatus(`${status} < W${error.message}`)
         });
     }
 
@@ -216,6 +224,7 @@ export const AppProvider = ({ children }: any) => {
         setLoadingHints,
         status,
         fetchPermissions,
+        fetchGeoLocation,
         currentHint,
         setCurrentHint,
         newHint

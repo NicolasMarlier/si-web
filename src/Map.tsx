@@ -10,12 +10,12 @@ import Menu from "./Menu"
 import InvaderSelector from "./InvaderSelector"
 
 const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1"
-const positionMarkerIcon = () => ({
+const positionMarkerIcon = (orientation: number) => ({
     path: arrowPath,
     fillColor: "#ff0000",
     fillOpacity: 0.8,
     strokeWeight: 0,
-    rotation: 0,
+    rotation: orientation,
     scale: 2
 })
 
@@ -147,7 +147,7 @@ const Map = () => {
             
             positionMarker.current = new google.maps.Marker({
                 position: currentPosition,
-                icon: positionMarkerIcon(),
+                icon: positionMarkerIcon(currentOrientation),
                 map: map.current
             });
     
@@ -186,12 +186,14 @@ const Map = () => {
             }
         })
         panorama.current.addListener("pov_changed", () => {
-            positionMarker.current?.setIcon({
-                ...positionMarkerIcon(),
-                ...{
-                    rotation: panorama.current?.getPov().heading
-                }
-            })
+            if(editMode) {
+                positionMarker.current?.setIcon({
+                    ...positionMarkerIcon(currentOrientation),
+                    ...{
+                        rotation: panorama.current?.getPov().heading
+                    }
+                })
+            }
         })
         map.current?.setStreetView(panorama.current);
     }
@@ -205,14 +207,7 @@ const Map = () => {
 
     useEffect(() => {
         if(positionMarker.current) {
-            positionMarker.current.setIcon({
-                path: "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1",
-                fillColor: "#ff0000",
-                fillOpacity: 0.8,
-                strokeWeight: 0,
-                rotation: currentOrientation,
-                scale: 2
-            })
+            positionMarker.current.setIcon(positionMarkerIcon(currentOrientation))
         }
         
     }, [currentOrientation])
