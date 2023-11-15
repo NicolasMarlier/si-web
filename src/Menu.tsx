@@ -1,22 +1,17 @@
-import { useContext, useState, PropsWithChildren} from "react"
-
-
+import { useContext, PropsWithChildren} from "react"
 
 import { NavLink } from 'react-router-dom'
 import { AppContext } from "./AppProvider"
-import _ from "lodash"
 import loadingGif from './icons/loading.gif'
 
 
 const Menu = (props: PropsWithChildren) => {
     const { children } = props
-    const { loading, invaders, syncInvadersFromOfficialApi, newHint, currentGeoLocation } = useContext(AppContext)
+    const { loading } = useContext(AppContext)
 
     return (
         <div className="menu">
             <div className="menu-container">
-                
-
                 <div className="nav-items">
                     <NavLink
                         to="/settings"

@@ -9,34 +9,35 @@ import InvaderModal from "./InvaderModal"
 import Menu from "./Menu"
 import InvaderSelector from "./InvaderSelector"
 
-const positionMarkerIcon ={
-    path: "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1",
+const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1"
+const positionMarkerIcon = () => ({
+    path: arrowPath,
     fillColor: "#ff0000",
     fillOpacity: 0.8,
     strokeWeight: 0,
     rotation: 0,
     scale: 2
-};
+})
 
 const circlePath = "M 100 100 M -75 0 A 75 75 0 1 0 150 0 A 75,75 0 1,0 -150 0"
-const hintIcon = {
-    path: circlePath,
+const hintIcon = () => ({
+    path: google.maps.SymbolPath.CIRCLE,
     fillColor: "#22ff3366",
     fillOpacity: 1.0,
     strokeWeight: 0,
     rotation: 0,
     scale: 20,
-}
+})
 
-const selectedHintIcon = {
-    path: circlePath,
+const selectedHintIcon = () => ({
+    path: google.maps.SymbolPath.CIRCLE,
     fillColor: "#22ff3366",
     fillOpacity: 1.0,
     strokeColor: "#22ff33",
     strokeWeight: 2,
     rotation: 0,
     scale: 20,
-}
+})
 
 const Map = () => {
     const invaderMarkers = useRef({} as {[key: string]: google.maps.Marker})
@@ -113,7 +114,7 @@ const Map = () => {
             //@ts-ignore
             const { PlacesService } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
 
-
+            console.log(google.maps.SymbolPath.CIRCLE)
             map.current = new Map(document.getElementById("map") as HTMLElement, {
                 center: currentGeoLocation,
                 zoom: defaultZoom,
@@ -146,7 +147,7 @@ const Map = () => {
             
             positionMarker.current = new google.maps.Marker({
                 position: currentPosition,
-                icon: positionMarkerIcon,
+                icon: positionMarkerIcon(),
                 map: map.current
             });
     
@@ -186,7 +187,7 @@ const Map = () => {
         })
         panorama.current.addListener("pov_changed", () => {
             positionMarker.current?.setIcon({
-                ...positionMarkerIcon,
+                ...positionMarkerIcon(),
                 ...{
                     rotation: panorama.current?.getPov().heading
                 }
@@ -272,7 +273,7 @@ const Map = () => {
     const unselectSelectedHintMarker = () => {
         if(selectedHintReference.current?.id) {
             const marker = hintMarkers.current[selectedHintReference.current?.id]
-            marker.setIcon(hintIcon)
+            marker.setIcon(hintIcon())
             marker.setDraggable(false)
         }
     }
@@ -280,7 +281,7 @@ const Map = () => {
     const selectSelectedHintMarker = () => {
         if(selectedHintReference.current?.id) {
             const marker = hintMarkers.current[selectedHintReference.current?.id]
-            marker.setIcon(selectedHintIcon)
+            marker.setIcon(selectedHintIcon())
             marker.setDraggable(editMode)
             map.current?.panTo(selectedHintReference.current.position)
         }
@@ -310,6 +311,7 @@ const Map = () => {
     }, [editMode])
 
     useEffect(() => {
+        console.log("coucou", map.current)
         if(map.current) {
             _.each(hintMarkers.current, (marker, _id) => marker.setMap(null))
             hintMarkers.current = _.mapValues(
@@ -317,14 +319,7 @@ const Map = () => {
                 hint => {
                     let marker = new google.maps.Marker({
                         position: hint.position,
-                        icon: {
-                            path: google.maps.SymbolPath.CIRCLE,
-                            fillColor: "#22ff3366",
-                            fillOpacity: 1.0,
-                            strokeWeight: 0,
-                            rotation: 0,
-                            scale: 20,
-                        },
+                        icon: hintIcon(),
                         zIndex: 10,
                         map: map.current,
                     });
@@ -338,20 +333,7 @@ const Map = () => {
                 }
             )
         }
-    }, [hints])
-
-
-    useEffect(() => {
-        console.log("map.current changed")
-    }, [map.current])
-
-    useEffect(() => {
-        console.log("invaders changed")
-    }, [invaders])
-
-    useEffect(() => {
-        console.log(`editMode changed: ${editMode}`)
-    }, [editMode])
+    }, [hints, map.current])
     
     const invadersToPosition = invaders.filter(i => !i.position)
 
@@ -368,7 +350,6 @@ const Map = () => {
         }
 
         placesService.current?.findPlaceFromQuery(request, function(results: any, status: any) {
-            console.log(results, status)
             if (status === google.maps.places.PlacesServiceStatus.OK) {
             
                 const gPosition = results[0].geometry.location

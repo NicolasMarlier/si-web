@@ -1,9 +1,9 @@
-import { createContext, useEffect, useState } from 'react';
+import { createContext, useEffect, useRef, useState } from 'react';
 import _ from 'lodash';
 
 import ApiClient from "./ApiClient"
 import Cache from './Cache'
-
+import Permissions from './Permissions'
 
 const PARIS_CENTER = {
     lat: 48.864716,
@@ -23,7 +23,6 @@ interface Context {
     loading: boolean
     loadingMap: boolean
     loadingLocation: boolean
-    shouldAskGeoPermissionStatus: boolean
     currentHint: Hint | null,
     setCurrentHint: (hint: Hint | null) => void
     newHint: (position: Position) => void
@@ -47,6 +46,7 @@ export const AppProvider = ({ children }: any) => {
     const [loadingInvaders, setLoadingInvaders] = useState(true)
     const [loadingMap, setLoadingMap] = useState(true)
     const [loadingLocation, setLoadingLocation] = useState(true)
+    const loadingLocationRef = useRef(true)
 
     const [loading, setLoading] = useState(true)
     const [hintWasJustAdded, setHintWasJustAdded] = useState(false)
@@ -55,8 +55,6 @@ export const AppProvider = ({ children }: any) => {
 
     const [currentGeoLocation, setCurrentGeoLocation] = useState({} as GeoPosition)
     const [currentOrientation, setCurrentOrientation] = useState(0)
-
-    const [shouldAskGeoPermissionStatus, setShouldAskGeoPermissionStatus] = useState(false)
     
     const [timer, setTimer] = useState(0)
     const [invaders, setInvaders] = useState([] as Invader[])
@@ -67,26 +65,13 @@ export const AppProvider = ({ children }: any) => {
         fetchPermissions()
         setTimer(timer + 1)
     }, [])
-
-    interface DeviceOrientationEventiOS extends DeviceOrientationEvent {
-        requestPermission?: () => Promise<'granted' | 'denied'>;
-      }
       
     const fetchPermissions = async() => {
-        const geoLocationState = (await navigator.permissions.query({ name: "geolocation" })).state
-        const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
-        const iOS = typeof requestPermission === 'function';
-        let orientationState = ""
-        if (iOS) {
-            orientationState = await requestPermission()
-            window.addEventListener("deviceorientation", function (event) {
-                setCurrentOrientation(Math.round((event as any).webkitCompassHeading || 0))
-            });
-        }
-        
-        if(geoLocationState === "prompt") {//|| (iOS && orientationState !== "granted")) {
-            setShouldAskGeoPermissionStatus(false)
-        }
+        await Permissions.requestPermissionGeoLocation()
+        await Permissions.requestPermissionDeviceOrientation()
+        window.addEventListener("deviceorientation", function (event) {
+            setCurrentOrientation(Math.round((event as any).webkitCompassHeading || 0))
+        });
     }
 
 
@@ -129,7 +114,7 @@ export const AppProvider = ({ children }: any) => {
         })
 
         setTimeout(() => {
-            if(loadingLocation) {
+            if(loadingLocationRef.current) {
                 setLoadingLocation(false)
                 setCurrentGeoLocation({
                     lat: PARIS_CENTER.lat,
@@ -147,29 +132,29 @@ export const AppProvider = ({ children }: any) => {
                 heading: position.coords.heading,
             })
         });
-
-        
     }
+
+    useEffect(() => {
+        loadingLocationRef.current = loadingLocation
+    }, [loadingLocation])
 
     useEffect(() => {
         if(navigator.geolocation) {
             const watchID = fetchGeoLocation()
             return () => navigator.geolocation.clearWatch(watchID);;
         }
-    }, [navigator.geolocation, shouldAskGeoPermissionStatus]);
+    }, [navigator.geolocation]);
 
     useEffect(() => {
         if(initialLoading) {
             setInitialLoading(
                 loadingLocation ||
                 loadingHints ||
-                loadingInvaders ||
-                // loadingMap ||
-                shouldAskGeoPermissionStatus
+                loadingInvaders
             )
         }
         
-    }, [loadingLocation, loadingHints, loadingInvaders, loadingMap, shouldAskGeoPermissionStatus])
+    }, [loadingLocation, loadingHints, loadingInvaders, loadingMap])
 
     useEffect(() => {
         setLoading(loadingHints || loadingInvaders)
@@ -200,8 +185,9 @@ export const AppProvider = ({ children }: any) => {
     }
 
     const syncInvadersFromOfficialApi = async() => {
+        setLoadingInvaders(true)
         await ApiClient.syncInvaders()
-        return ApiClient.listInvaders().then(setInvaders)
+        return fetchInvaders()
     }
 
     const moveInvader = async(invader: Invader, position: Position) => {
@@ -230,7 +216,6 @@ export const AppProvider = ({ children }: any) => {
         setLoadingHints,
         status,
         fetchPermissions,
-        shouldAskGeoPermissionStatus,
         currentHint,
         setCurrentHint,
         newHint

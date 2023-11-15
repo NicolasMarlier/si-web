@@ -14,7 +14,6 @@ const Login:React.FC = () => {
         ApiClient
         .login(uuid)
         .then(() => {
-            console.log("HELLO, YES!")
             navigate("/");
         })
         .catch((e) => {

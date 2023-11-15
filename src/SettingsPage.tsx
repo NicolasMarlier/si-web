@@ -4,9 +4,10 @@ import Menu from "./Menu"
 import { AppContext } from "./AppProvider"
 import './SettingsPage.scss'
 import _ from "lodash"
+import Permissions from './Permissions'
 
 const SettingsPage = () => {
-    const { syncInvadersFromOfficialApi, invaders} = useContext(AppContext)
+    const { syncInvadersFromOfficialApi, invaders } = useContext(AppContext)
     
     const totalPoints = _.sum(_.map(invaders, "point")) + _.keys(_.groupBy(invaders, "city_id")).length * 100
     const totalFlashedCount = invaders.length
@@ -23,6 +24,12 @@ const SettingsPage = () => {
 
             <div className="btn" onClick={syncInvadersFromOfficialApi}>
                 <div className="icon sync"/>
+            </div>
+            <div className="btn" onClick={Permissions.requestPermissionDeviceOrientation}>
+                <div className="icon location"/>
+            </div>
+            <div className="btn" onClick={Permissions.requestPermissionDeviceOrientation}>
+                <div className="icon compass"/>
             </div>
             <div className="btn" onClick={ApiClient.logout}>
                 <div className="icon logout"/>

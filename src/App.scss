@@ -109,6 +109,12 @@ html, body {
       &.settings {
         mask: url(icons/settings.svg) no-repeat center;
       }
+      &.location {
+        mask: url(icons/location.svg) no-repeat center;
+      }
+      &.compass {
+        mask: url(icons/compass.svg) no-repeat center;
+      }
   }
 
   &:hover {
