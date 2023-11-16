@@ -2,16 +2,18 @@
     display: flex;
     justify-content: space-around;
 }
+.collection-container {
+    padding: 0 0 54px 0;
+}
 .collection {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    align-content: flex-start;
+    display: grid;
+    grid-template-columns: auto auto auto auto auto auto;
+    padding: 1em;
+    column-gap: 1em;
     row-gap: 1em;
-    padding: 0.3em;
 
     div {
-        width: 120px;
+        //width: 120px;
         border-radius: 8px;
         overflow: hidden;
     }
@@ -19,9 +21,7 @@
 
 
 @media screen and (max-width:640px) {
-    .invader-group {
-        .stats {
-            flex-direction: row-reverse;
-        }
+    .collection {
+        grid-template-columns: auto auto auto;
     }
 }

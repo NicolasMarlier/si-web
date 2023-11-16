@@ -20,7 +20,7 @@ const Collection = () => {
   }, [mode, invaders])
 
   return (
-    <div>
+    <div className="collection-container">
       <div className="collection">
         { sortedInvaders.map(invader =>
           <InvaderComponent
