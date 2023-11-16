@@ -100,7 +100,6 @@ export const AppProvider = ({ children }: any) => {
     
     
     const fetchGeoLocation = () => {
-        setStatus(`${status} | fetchGeo called`)
         const cached_current_position = Cache.get(Cache.KEY_CURRENT_POSITION)
         if(cached_current_position && loadingLocation) {
             setLoadingLocation(false)
@@ -108,15 +107,14 @@ export const AppProvider = ({ children }: any) => {
         }
 
         navigator.geolocation.getCurrentPosition(position => {
-            setStatus(`${status} > ${position}`)
             setLoadingLocation(false)
             setCurrentGeoLocation({
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
                 heading: position.coords.heading,
             })
-        }, error => {
-            setStatus(`${status} < ${error.message}`)
+        }, (_error) => {
+            //TODO Handle error properly
         })
 
         setTimeout(() => {
@@ -137,8 +135,8 @@ export const AppProvider = ({ children }: any) => {
                 lng: position.coords.longitude,
                 heading: position.coords.heading,
             })
-        }, (error) => {
-            setStatus(`${status} < W${error.message}`)
+        }, (_error) => {
+            //TODO Handle error properly
         });
     }
 
