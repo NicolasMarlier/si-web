@@ -19,7 +19,6 @@ const positionMarkerIcon = (orientation: number) => ({
     scale: 2
 })
 
-const circlePath = "M 100 100 M -75 0 A 75 75 0 1 0 150 0 A 75,75 0 1,0 -150 0"
 const hintIcon = () => ({
     path: google.maps.SymbolPath.CIRCLE,
     fillColor: "#22ff3366",
@@ -240,8 +239,12 @@ const Map = () => {
                     });
                     marker.addListener("dragend", (e: any) => {
                         setSelectedInvaderPosition({lat: e.latLng.lat(), lng: e.latLng.lng()})
+                    });
+                    
+                    marker.addListener("click", () => {
+                        setCurrentHint(null)
+                        setSelectedInvader(invader)
                     })
-                    marker.addListener("click", () => setSelectedInvader(invader))
                     invaderMarkers.current[invader.name] = marker
                 }
             })
@@ -320,6 +323,7 @@ const Map = () => {
                         map: map.current,
                     });
                     marker.addListener('click', () => {
+                        setSelectedInvader(null)
                         setCurrentHint(hint)
                     })
                     // if(editMode) {
