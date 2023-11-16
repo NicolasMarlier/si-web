@@ -61,6 +61,7 @@ const Map = () => {
     const location = useLocation();
     
     const clickOnMap = (e: any) => {
+        console.log("Click on map")
         setCurrentHint(null)
         setSelectedInvader(null)
 
@@ -142,6 +143,7 @@ const Map = () => {
                     }
                 ]
             })
+            map.current?.addListener("click", clickOnMap)
     
             placesService.current = new PlacesService(map.current);
             
@@ -306,7 +308,6 @@ const Map = () => {
     }, [editMode])
 
     useEffect(() => {
-        console.log("coucou", map.current)
         if(map.current) {
             _.each(hintMarkers.current, (marker, _id) => marker.setMap(null))
             hintMarkers.current = _.mapValues(

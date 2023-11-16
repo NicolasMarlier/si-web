@@ -50,11 +50,30 @@
         right: 0;
         left: 0;
         height: 60px;
+        display: flex;
+        justify-content: space-between;
 
         input {
             margin: 0 0.4em 0 0;
             line-height: 1em;
             padding: 0.4em 0.4em;
+        }
+
+        .name {
+            font-size: 1.2em;
+            text-align: center;
+        }
+        .score {
+            color: #00000066;
+        }
+        .built-at {
+            color: #00000066;
+        }
+        .flashed-at {
+            display: none;
+        }
+        .btn {
+            display: none;
         }
     }
 

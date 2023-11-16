@@ -14,10 +14,12 @@ const InvaderModal = (props: Props) => {
     
 
     return <div className="invader-modal">
+        
+        
+        <div className="built-at">{ moment(date_pos).format("YYYY") }</div>
         <div className="name">{ name.replace("_", " ") }</div>
-        <div className="score">{ point }pts ({ moment(date_pos).format("YYYY") })</div>
-        <div className="built-at"></div>
-        <br/>
+        <div className="score">{ point }pts</div>
+        
         <div className="flashed-at">Flashé { moment(date_flash).locale("fr").format('dddd D MMMM à HH:mm') }</div>
 
         <div className={`btn green ${positionUpdated ? '' : 'hide'}`} onClick={() => onSave()}>
