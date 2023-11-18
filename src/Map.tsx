@@ -187,14 +187,9 @@ const Map = () => {
             }
         })
         panorama.current.addListener("pov_changed", () => {
-            if(editMode) {
-                positionMarker.current?.setIcon({
-                    ...positionMarkerIcon(currentOrientation),
-                    ...{
-                        rotation: panorama.current?.getPov().heading
-                    }
-                })
-            }
+            positionMarker.current?.setIcon({
+                ...positionMarkerIcon(panorama.current?.getPov().heading || currentOrientation)
+            })
         })
         map.current?.setStreetView(panorama.current);
     }

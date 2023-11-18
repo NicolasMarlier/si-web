@@ -12,3 +12,9 @@
 .invader-selector *.selected {
     border: 4px solid #00dd00;
 }
+
+@media screen and (max-width:640px) {
+    .invader-selector {
+        display: none;
+    }
+}
