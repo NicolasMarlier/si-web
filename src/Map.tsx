@@ -19,20 +19,30 @@ const positionMarkerIcon = (orientation: number) => ({
     scale: 2
 })
 
-const hintIcon = () => ({
+const hintColor = (hint: Hint) => {
+    if(hint.description.includes("DEAD")) {
+        return "#000000"
+    }
+    else if(hint.description.includes("INFLASHABLE")) {
+        return "#ff8905"
+    }
+    return "#22ff33"
+}
+
+const hintIcon = (hint: Hint) => ({
     path: google.maps.SymbolPath.CIRCLE,
-    fillColor: "#22ff3366",
-    fillOpacity: 1.0,
+    fillColor: hintColor(hint),
+    fillOpacity: 0.25,
     strokeWeight: 0,
     rotation: 0,
     scale: 20,
 })
 
-const selectedHintIcon = () => ({
+const selectedHintIcon = (hint: Hint) => ({
     path: google.maps.SymbolPath.CIRCLE,
-    fillColor: "#22ff3366",
-    fillOpacity: 1.0,
-    strokeColor: "#22ff33",
+    fillColor: hintColor(hint),
+    fillOpacity: 0.5,
+    strokeColor: hintColor(hint),
     strokeWeight: 2,
     rotation: 0,
     scale: 20,
@@ -60,7 +70,6 @@ const Map = () => {
     const location = useLocation();
     
     const clickOnMap = (e: any) => {
-        console.log("Click on map")
         setCurrentHint(null)
         setSelectedInvader(null)
 
@@ -262,13 +271,14 @@ const Map = () => {
             marker.setIcon(invaderIcon(selectedInvaderReference.current, {selected: true}))
             marker.setDraggable(editMode)
             map.current?.panTo(selectedInvaderReference.current.position)
+            panorama.current?.setPosition(selectedInvaderReference.current.position)
         }
     }
 
     const unselectSelectedHintMarker = () => {
         if(selectedHintReference.current?.id) {
             const marker = hintMarkers.current[selectedHintReference.current?.id]
-            marker.setIcon(hintIcon())
+            marker.setIcon(hintIcon(selectedHintReference.current))
             marker.setDraggable(false)
         }
     }
@@ -276,9 +286,10 @@ const Map = () => {
     const selectSelectedHintMarker = () => {
         if(selectedHintReference.current?.id) {
             const marker = hintMarkers.current[selectedHintReference.current?.id]
-            marker.setIcon(selectedHintIcon())
+            marker.setIcon(selectedHintIcon(selectedHintReference.current))
             marker.setDraggable(editMode)
             map.current?.panTo(selectedHintReference.current.position)
+            panorama.current?.setPosition(selectedHintReference.current.position)
         }
     }
 
@@ -313,7 +324,7 @@ const Map = () => {
                 hint => {
                     let marker = new google.maps.Marker({
                         position: hint.position,
-                        icon: hintIcon(),
+                        icon: hintIcon(hint),
                         zIndex: 10,
                         map: map.current,
                     });
@@ -369,7 +380,9 @@ const Map = () => {
         </div>
         { invadersToPosition && <InvaderSelector
             invaders={invadersToPosition}
-            onSelect={(i) => moveInvader(i, currentPosition)}/>}
+            hints={hints}
+            onSelect={(i) => moveInvader(i, currentPosition)}
+            onSelectHint={(hint) => setCurrentHint(hint)}/>}
         { currentHint && <HintModal
             hint={currentHint}
             onDelete={deleteCurrentHint}
