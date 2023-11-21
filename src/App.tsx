@@ -15,7 +15,7 @@ import Collection from './Collection';
 
 
 const App:React.FC = () => {
-  const { initialLoading, loadingLocation } = useContext(AppContext)
+  const { initialLoading } = useContext(AppContext)
 
   return (
     

@@ -56,6 +56,13 @@ html, body {
   margin: 10px;
   padding: 0;
   width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.fixed-width {
+    width: 20em;
+  }
 
   .text {
     padding: 0 2em;
@@ -67,6 +74,10 @@ html, body {
     margin: 0;
     line-height: 2em;
     padding: 1em 0;
+  }
+
+  .label {
+    padding: 0 1em 0 0;
   }
 
   .icon {
@@ -122,12 +133,18 @@ html, body {
       .icon {
           background-color: #ffcc00;
       }
+      .label {
+        color: #ffcc00;
+      }
   }
 
   &.active {
       border: 2px solid #ffcc00;
       .icon {
           background-color: #ffcc00;
+      }
+      .label {
+        color: #ffcc00;
       }
   }
 

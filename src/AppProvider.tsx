@@ -3,7 +3,6 @@ import _ from 'lodash';
 
 import ApiClient from "./ApiClient"
 import Cache from './Cache'
-import Permissions from './Permissions'
 
 const PARIS_CENTER = {
     lat: 48.864716,
@@ -22,7 +21,6 @@ interface Context {
     initialLoading: boolean
     loading: boolean
     loadingMap: boolean
-    loadingLocation: boolean
     currentHint: Hint | null,
     setCurrentHint: (hint: Hint | null) => void
     newHint: (position: Position) => void
@@ -32,7 +30,8 @@ interface Context {
     syncInvadersFromOfficialApi: () => void    
     setLoadingHints: (loading: boolean) => void
     status: string
-    fetchPermissions: () => void
+    statusGeoLocation: string | undefined
+    statusDeviceOrientation: string | undefined
     fetchGeoLocation: () => void
 }
 export const AppContext = createContext({
@@ -46,15 +45,16 @@ export const AppProvider = ({ children }: any) => {
     const [loadingHints, setLoadingHints] = useState(true)
     const [loadingInvaders, setLoadingInvaders] = useState(true)
     const [loadingMap, setLoadingMap] = useState(true)
-    const [loadingLocation, setLoadingLocation] = useState(true)
-    const loadingLocationRef = useRef(true)
 
     const [loading, setLoading] = useState(true)
     const [hintWasJustAdded, setHintWasJustAdded] = useState(false)
 
     const [currentHint, setCurrentHint] = useState(null as Hint | null)
 
-    const [currentGeoLocation, setCurrentGeoLocation] = useState({} as GeoPosition)
+    const [currentGeoLocation, setCurrentGeoLocation] = useState(Cache.get(Cache.KEY_CURRENT_POSITION) || PARIS_CENTER as GeoPosition)
+    const [statusGeoLocation, setStatusGeoLocation] = useState(undefined as string | undefined )
+    const [statusDeviceOrientation, setStatusDeviceOrientation] = useState(undefined as string | undefined)
+
     const [currentOrientation, setCurrentOrientation] = useState(0)
     
     const [timer, setTimer] = useState(0)
@@ -63,14 +63,14 @@ export const AppProvider = ({ children }: any) => {
     useEffect(() => {
         fetchHints()
         fetchInvaders()
-        fetchPermissions()
+        watchDeviceOrientation()
         setTimer(timer + 1)
     }, [])
       
-    const fetchPermissions = async() => {
-        await Permissions.requestPermissionGeoLocation()
-        await Permissions.requestPermissionDeviceOrientation()
+    const watchDeviceOrientation = async() => {
+        setStatusDeviceOrientation("unavailable")
         window.addEventListener("deviceorientation", function (event) {
+            setStatusDeviceOrientation("active")
             setCurrentOrientation(Math.round((event as any).webkitCompassHeading || 0))
         });
     }
@@ -100,49 +100,19 @@ export const AppProvider = ({ children }: any) => {
     
     
     const fetchGeoLocation = () => {
-        const cached_current_position = Cache.get(Cache.KEY_CURRENT_POSITION)
-        if(cached_current_position && loadingLocation) {
-            setLoadingLocation(false)
-            setCurrentGeoLocation(cached_current_position)
-        }
-
-        navigator.geolocation.getCurrentPosition(position => {
-            setLoadingLocation(false)
-            setCurrentGeoLocation({
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                heading: position.coords.heading,
-            })
-        }, (_error) => {
-            //TODO Handle error properly
-        })
-
-        setTimeout(() => {
-            if(loadingLocationRef.current) {
-                setLoadingLocation(false)
-                setCurrentGeoLocation({
-                    lat: PARIS_CENTER.lat,
-                    lng: PARIS_CENTER.lng,
-                    heading: 0
-                })
-            }
-        }, 5000)
-
+        console.log("Fetching geolocation")
         return navigator.geolocation.watchPosition((position) => {
-            setLoadingLocation(false)
+            setStatusGeoLocation("active")
             setCurrentGeoLocation({
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
                 heading: position.coords.heading,
             })
-        }, (_error) => {
+        }, (error) => {
+            setStatusGeoLocation(error.message)
             //TODO Handle error properly
         });
     }
-
-    useEffect(() => {
-        loadingLocationRef.current = loadingLocation
-    }, [loadingLocation])
 
     useEffect(() => {
         if(navigator.geolocation) {
@@ -154,13 +124,12 @@ export const AppProvider = ({ children }: any) => {
     useEffect(() => {
         if(initialLoading) {
             setInitialLoading(
-                loadingLocation ||
                 loadingHints ||
                 loadingInvaders
             )
         }
         
-    }, [loadingLocation, loadingHints, loadingInvaders, loadingMap])
+    }, [loadingHints, loadingInvaders, loadingMap])
 
     useEffect(() => {
         setLoading(loadingHints || loadingInvaders)
@@ -217,15 +186,15 @@ export const AppProvider = ({ children }: any) => {
         currentOrientation,
         loading,
         loadingMap,
-        loadingLocation,
         syncInvadersFromOfficialApi,
         setLoadingHints,
-        status,
-        fetchPermissions,
         fetchGeoLocation,
         currentHint,
         setCurrentHint,
-        newHint
+        newHint,
+        statusGeoLocation,
+        statusDeviceOrientation,
+        status
     }
  
     return (

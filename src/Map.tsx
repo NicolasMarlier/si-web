@@ -10,14 +10,7 @@ import Menu from "./Menu"
 import InvaderSelector from "./InvaderSelector"
 
 const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1"
-const positionMarkerIcon = (orientation: number) => ({
-    path: arrowPath,
-    fillColor: "#ff0000",
-    fillOpacity: 0.8,
-    strokeWeight: 0,
-    rotation: orientation,
-    scale: 2
-})
+
 
 const hintColor = (hint: Hint) => {
     if(hint.description.includes("DEAD")) {
@@ -65,15 +58,27 @@ const Map = () => {
     const [selectedInvader, setSelectedInvader] = useState(null as Invader | null)
     const [selectedInvaderPosition, setSelectedInvaderPosition] = useState(undefined as Position | undefined)
 
-    const [editMode, setEditMode] = useState(false)
+    const editModeReference = useRef(false)
     const [containerClass, setContainerClass] = useState("")
     const location = useLocation();
+
+    const positionMarkerIcon = (orientation: number) => ({
+        path: arrowPath,
+        fillColor: editModeReference.current ? "#ff0000" : "#00ccff",
+        fillOpacity: 0.8,
+        strokeWeight: 0,
+        rotation: orientation,
+        scale: 2
+    })
     
     const clickOnMap = (e: any) => {
         setCurrentHint(null)
         setSelectedInvader(null)
-
-        if(editMode) {
+    
+        if(editModeReference.current) {
+            setCurrentHint(null)
+            setSelectedInvader(null)
+    
             const gPosition = e.latLng
             positionMarker.current?.setPosition(gPosition)
             panorama.current?.setPosition(gPosition)
@@ -81,12 +86,14 @@ const Map = () => {
         }
     }
 
+
+
     useEffect(() => {
         setContainerClass({
             "/map": "full-map",
             "/place": "map-and-pano"
         }[location.pathname] || "hidden")
-        setEditMode({
+        editModeReference.current = ({
             "/place": true
         }[location.pathname] || false)
     }, [location]);
@@ -151,6 +158,7 @@ const Map = () => {
                     }
                 ]
             })
+
             map.current?.addListener("click", clickOnMap)
     
             placesService.current = new PlacesService(map.current);
@@ -162,7 +170,7 @@ const Map = () => {
             });
     
             initPanorama()
-            positionMarker.current?.setDraggable(editMode);
+            positionMarker.current?.setDraggable(editModeReference.current);
             positionMarker.current?.addListener(
                 "dragend",
                 (e: any) => {
@@ -204,14 +212,14 @@ const Map = () => {
     }
 
     useEffect(() => {
-        if(positionMarker.current) {
+        if(positionMarker.current && !editModeReference.current) {
             positionMarker.current.setPosition(currentGeoLocation)
         }
         
     }, [currentGeoLocation])
 
     useEffect(() => {
-        if(positionMarker.current) {
+        if(positionMarker.current && !editModeReference.current) {
             positionMarker.current.setIcon(positionMarkerIcon(currentOrientation))
         }
         
@@ -269,7 +277,7 @@ const Map = () => {
         if(selectedInvaderReference.current?.name && selectedInvaderReference.current?.position) {
             const marker = invaderMarkers.current[selectedInvaderReference.current?.name]
             marker.setIcon(invaderIcon(selectedInvaderReference.current, {selected: true}))
-            marker.setDraggable(editMode)
+            marker.setDraggable(editModeReference.current)
             map.current?.panTo(selectedInvaderReference.current.position)
             panorama.current?.setPosition(selectedInvaderReference.current.position)
         }
@@ -287,7 +295,7 @@ const Map = () => {
         if(selectedHintReference.current?.id) {
             const marker = hintMarkers.current[selectedHintReference.current?.id]
             marker.setIcon(selectedHintIcon(selectedHintReference.current))
-            marker.setDraggable(editMode)
+            marker.setDraggable(editModeReference.current)
             map.current?.panTo(selectedHintReference.current.position)
             panorama.current?.setPosition(selectedHintReference.current.position)
         }
@@ -309,12 +317,12 @@ const Map = () => {
     }, [currentHint])
 
     useEffect(() => {
-        positionMarker.current?.setDraggable(editMode);
-        if(map.current) {
-            google.maps.event.clearListeners(map.current, 'click');
-            map.current?.addListener("click", clickOnMap)
-        }
-    }, [editMode])
+        // if(map.current) {
+        //     google.maps.event.clearListeners(map.current, 'click');
+        // }
+        positionMarker.current?.setDraggable(editModeReference.current);
+        positionMarker.current?.setIcon(positionMarkerIcon(currentOrientation))
+    }, [editModeReference.current])
 
     useEffect(() => {
         if(map.current) {
@@ -332,9 +340,6 @@ const Map = () => {
                         setSelectedInvader(null)
                         setCurrentHint(hint)
                     })
-                    // if(editMode) {
-                        
-                    // }
                     return marker
                 }
             )

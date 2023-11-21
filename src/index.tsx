@@ -4,7 +4,7 @@ import './index.css';
 import App from './App';
 import Collection from './Collection'
 import Login from './Login'
-import SettingsPage from './SettingsPage'
+import SettingsPage from './SettingsPage/SettingsPage'
 
 import reportWebVitals from './reportWebVitals';
 

@@ -3,13 +3,11 @@ import './InitialLoading.scss'
 import { AppContext } from './AppProvider'
 import loadingGif from './icons/loading.gif'
 const InitialLoading = () => {
-    const { loadingLocation, loading, loadingMap, status, fetchPermissions } = useContext(AppContext)
+    const { status } = useContext(AppContext)
     
     return <div className="loading-container">
         <img src={loadingGif}/>
         <div className="main-message">LOADING</div>
-        { loadingLocation && "Locating you..."}
-        { loading && "Getting invaders..."}
         { status }
     </div>
 }
