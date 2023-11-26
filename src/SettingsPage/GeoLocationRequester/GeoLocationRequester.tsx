@@ -25,7 +25,7 @@ const GeoLocationRequester = () => {
                 
             <div className="btn" onClick={request}>
                 <span className="icon location"/>
-                <div className="label">Demander la localisation</div>
+                <div className="label">Demander l'accès à localisation de l'appareil</div>
             </div>
         </div>
     }

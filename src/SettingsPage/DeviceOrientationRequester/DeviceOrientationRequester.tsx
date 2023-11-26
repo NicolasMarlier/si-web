@@ -11,21 +11,21 @@ const DeviceOrientationRequester = () => {
 
     if(statusDeviceOrientation === undefined) {
         return <div className="status-box">
-            Orientation de l'appareil: en attente...
+            Boussole: en attente...
         </div>
     }
     else if(statusDeviceOrientation === "active") {
         return <div className="status-box">
-            Orientation de l'appareil: activée
+            Boussole: activée
         </div>
     }
     else {
         return <div className="status-box">
-            <div>Orientation de l'appareil: { statusDeviceOrientation }</div>
+            <div>Boussole: { statusDeviceOrientation }</div>
                 
             <div className="btn" onClick={request}>
                 <span className="icon compass"/>
-                <div className="label">Demander l'orientation de l'appareil</div>
+                <div className="label">Demander l'accès à la boussole</div>
             </div>
         </div>
     }

@@ -16,6 +16,11 @@ const SettingsPage = () => {
 
     return <div className="settings-page">
         <Menu>
+            <div className="btn" onClick={syncInvadersFromOfficialApi}>
+                <div className="icon sync"/>
+                <div className="desktop-label">Synchroniser</div>
+            </div>
+
             <div className="btn" onClick={ApiClient.logout}>
                 <div className="icon logout"/>
                 <div className="desktop-label">Déconnection</div>
