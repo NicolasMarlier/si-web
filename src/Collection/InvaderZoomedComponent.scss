@@ -36,7 +36,7 @@
         flex-direction: column;
         justify-content: center;
         align-items: flex-end;
-        padding: 0 20px;;
+        padding: 0 20px;
 
         .name {
             font-size: 70px;
@@ -51,7 +51,7 @@
         }
         .dates {
             position: absolute;
-            bottom: 0;
+            bottom: 10px;
             font-size: 14px;
         }
 
@@ -67,5 +67,13 @@
             max-height: 300px;
             max-width: 300px;
         }
+
+        .details {
+            width: 100%;
+            align-items: center;
+            height: 360px;
+        }
     }
+
+    
 }  

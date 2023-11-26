@@ -19,10 +19,18 @@
     padding: 0 1em;
 
     .name {
-        font-size: 1.2em;
+        font-family: 'Impact';
+        font-size: 30px;
+    }
+    .score {
+        font-size: 35px;
+        color: #000;
+        font-weight: 600;
+        font-family: 'Gill Sans';
     }
 
     .btn {
+        width: 50px;
         &.green {
             border-color: green;
             .icon {
@@ -60,14 +68,19 @@
         }
 
         .name {
-            font-size: 1.2em;
+            font-size: 30px;
             text-align: center;
+            color: #aaa;
         }
         .score {
-            color: #00000066;
+            font-size: 35px;
+            color: #000;
+            font-weight: 600;
+            font-family: 'Gill Sans';
         }
         .built-at {
-            color: #00000066;
+            color: #aaa;
+            font-size: 13px;
         }
         .flashed-at {
             display: none;
