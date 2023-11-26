@@ -11,21 +11,21 @@ const GeoLocationRequester = () => {
     }
     if(statusGeoLocation === undefined) {
         return <div className="status-box">
-            GeoLocation: pending...
+            Localisation: En attente...
         </div>
     }
     else if(statusGeoLocation === "active") {
         return <div className="status-box">
-            GeoLocation: active
+            Localisation: activée
         </div>
     }
     else {
         return <div className="status-box">
-            <div>GeoLocation: { statusGeoLocation }</div>
+            <div>Localisation: { statusGeoLocation }</div>
                 
             <div className="btn" onClick={request}>
                 <span className="icon location"/>
-                <div className="label">Request GeoLocation</div>
+                <div className="label">Demander la localisation</div>
             </div>
         </div>
     }

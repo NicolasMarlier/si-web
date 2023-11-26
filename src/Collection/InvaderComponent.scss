@@ -1,6 +1,8 @@
 .invader {
     position: relative;
     cursor: pointer;
+    border-radius: 4px;
+    overflow: hidden;
 }
 .invader .hover{
     position: absolute;

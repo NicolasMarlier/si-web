@@ -14,25 +14,28 @@ const Menu = (props: PropsWithChildren) => {
             <div className="menu-container">
                 <div className="nav-items">
                     <NavLink
-                        to="/settings"
+                        to="/map"
                         className="btn">
-                            <div className="icon settings"/>
+                            <div className="icon map"/>
+                            <div className="desktop-label">Carte</div>
                     </NavLink>
-                    
                     <NavLink
                         to="/collection"
                         className="btn">
                             <div className="icon collection"/>
-                    </NavLink>
-                    <NavLink
-                        to="/map"
-                        className="btn">
-                            <div className="icon map"/>
+                            <div className="desktop-label">Collection</div>
                     </NavLink>
                     <NavLink
                         to="/place"
                         className="btn no-mobile">
                             <div className="icon marker"/>
+                            <div className="desktop-label">Positionner</div>
+                    </NavLink>
+                    <NavLink
+                        to="/settings"
+                        className="btn">
+                            <div className="icon settings"/>
+                            <div className="desktop-label">Stats & Réglages</div>
                     </NavLink>
                     { loading && <img className="loading" src={loadingGif}/>}
                 </div>

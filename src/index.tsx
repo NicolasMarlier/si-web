@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Collection from './Collection'
+import Collection from './Collection/Collection'
 import Login from './Login'
 import SettingsPage from './SettingsPage/SettingsPage'
 

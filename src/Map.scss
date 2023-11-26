@@ -54,6 +54,10 @@
         #search {
             display: block;
         }
+
+        .center-here {
+            display: none;
+        }
     }
     &.hidden {
         display: none;
@@ -71,6 +75,24 @@
         display: flex;
         border-top: 1px solid #ddd;
         justify-content: space-between;
+    }
+
+    .center-here {
+        position: absolute;
+        z-index: 100;
+        width: 50px;
+        height: 50px;
+        bottom: 90px;
+        right: 10px;
+        background: white;
+        border-radius: 25px;
+
+        box-shadow: 0 0 5Px #00000033;
+        cursor: pointer;
+
+        .icon {
+            background-color: #6ec575;
+        }
     }
 }
 

@@ -279,7 +279,9 @@ const Map = () => {
             marker.setIcon(invaderIcon(selectedInvaderReference.current, {selected: true}))
             marker.setDraggable(editModeReference.current)
             map.current?.panTo(selectedInvaderReference.current.position)
-            panorama.current?.setPosition(selectedInvaderReference.current.position)
+            if(editModeReference.current) {
+                panorama.current?.setPosition(selectedInvaderReference.current.position)
+            }
         }
     }
 
@@ -297,8 +299,15 @@ const Map = () => {
             marker.setIcon(selectedHintIcon(selectedHintReference.current))
             marker.setDraggable(editModeReference.current)
             map.current?.panTo(selectedHintReference.current.position)
-            panorama.current?.setPosition(selectedHintReference.current.position)
+            if(editModeReference.current) {
+                panorama.current?.setPosition(selectedHintReference.current.position)
+            }
+            
         }
+    }
+
+    const panToCurrentLocation = () => {
+        map.current?.panTo(currentGeoLocation)
     }
 
 
@@ -383,6 +392,9 @@ const Map = () => {
                 <input name="query"/>
             </form>
         </div>
+        <div className="center-here" onClick={panToCurrentLocation}>
+            <div className="icon location"/>
+        </div>
         { invadersToPosition && <InvaderSelector
             invaders={invadersToPosition}
             hints={hints}
@@ -411,6 +423,7 @@ const Map = () => {
         <Menu>
             <div className="btn" onClick={() => newHint(currentPosition)}>
                 <div className="icon new-hint"/>
+                <div className="desktop-label">Nouvel indice</div>
             </div>
         </Menu>
     </div>

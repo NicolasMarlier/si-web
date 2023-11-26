@@ -10,7 +10,7 @@ import Menu from "./Menu"
 import { Outlet } from 'react-router-dom'
 import { AppContext } from './AppProvider';
 import InitialLoading from './InitialLoading';
-import Collection from './Collection';
+import Collection from './Collection/Collection';
 
 
 

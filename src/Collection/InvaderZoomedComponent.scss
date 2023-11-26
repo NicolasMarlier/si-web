@@ -6,7 +6,7 @@
     position: fixed;
     bottom: 0;
     top: 0;
-    left: 80px;
+    left: 200px;
     right: 0;
     background-color: white;
 
@@ -20,20 +20,41 @@
         max-width: 500px;
         width: auto;
         height: auto;
-        border-radius: 2em;
+        border-radius: 4px;
+    }
+
+    .flex-space {
+        flex: 1 0 0;
     }
 
     .details {
-        font-family: 'VT323';
-        font-size: 2em;
         color: #aaa;
+        position: relative;
+        height: 500px;
+        width: 300px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+        padding: 0 20px;;
 
+        .name {
+            font-size: 70px;
+            font-family: 'Impact';
+        }
         .score {
-            color: #ffcc00;
+            font-size: 160px;
+            line-height: 140px;
+            color: #000;
+            font-weight: 600;
+            font-family: 'Gill Sans';
         }
-        .flashed-at {
-            font-size: 0.7em;
+        .dates {
+            position: absolute;
+            bottom: 0;
+            font-size: 14px;
         }
+
     }
 }
 

@@ -18,6 +18,7 @@ const SettingsPage = () => {
         <Menu>
             <div className="btn" onClick={ApiClient.logout}>
                 <div className="icon logout"/>
+                <div className="desktop-label">Déconnection</div>
             </div>
         </Menu>
         <div className="settings-pane">
