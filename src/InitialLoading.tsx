@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import './InitialLoading.scss'
 import { AppContext } from './AppProvider'
-import loadingGif from './Icons/loading.gif'
+import loadingGif from './icons/loading.gif'
 
 const InitialLoading = () => {
     const { status } = useContext(AppContext)

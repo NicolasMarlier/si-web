@@ -1,7 +1,7 @@
 import { useContext, PropsWithChildren} from "react"
 import { NavLink } from 'react-router-dom'
 import { AppContext } from "./AppProvider"
-import loadingGif from './Icons/loading.gif'
+import loadingGif from './icons/loading.gif'
 
 import './Menu.scss';
 
