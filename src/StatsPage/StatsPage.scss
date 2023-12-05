@@ -1,0 +1,27 @@
+.stats-page {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 50px;
+    .graph-container {
+        flex: 1 1 auto;
+    }
+
+    .counts {
+        padding: 50px 0;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+            
+        .count {
+            font-size: 60px;
+            color: #444;
+            padding: 0 10px;
+        }
+        .label {
+            font-size: 40px;
+            color: #aaa;
+        }
+    }
+    
+}

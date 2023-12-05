@@ -1,9 +1,9 @@
 import { useContext, PropsWithChildren} from "react"
-
 import { NavLink } from 'react-router-dom'
 import { AppContext } from "./AppProvider"
-import loadingGif from './icons/loading.gif'
+import loadingGif from './Icons/loading.gif'
 
+import './Menu.scss';
 
 const Menu = (props: PropsWithChildren) => {
     const { children } = props
@@ -32,10 +32,16 @@ const Menu = (props: PropsWithChildren) => {
                             <div className="desktop-label">Positionner</div>
                     </NavLink>
                     <NavLink
+                        to="/stats"
+                        className="btn">
+                            <div className="icon chart"/>
+                            <div className="desktop-label">Stats</div>
+                    </NavLink>
+                    <NavLink
                         to="/settings"
                         className="btn">
                             <div className="icon settings"/>
-                            <div className="desktop-label">Stats & Réglages</div>
+                            <div className="desktop-label">Réglages</div>
                     </NavLink>
                     { loading && <img className="loading" src={loadingGif}/>}
                 </div>

@@ -11,6 +11,9 @@ import InvaderSelector from "./InvaderSelector"
 
 const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1"
 
+const POSITION_MARKER_COLOR = "#00acff"
+const POSITION_MARKER_GEO_COLOR = "#2bcc23"
+
 
 const hintColor = (hint: Hint) => {
     if(hint.description.includes("DEAD")) {
@@ -19,7 +22,7 @@ const hintColor = (hint: Hint) => {
     else if(hint.description.includes("INFLASHABLE")) {
         return "#ff8905"
     }
-    return "#22ff33"
+    return "#2bcc23"
 }
 
 const hintIcon = (hint: Hint) => ({
@@ -64,7 +67,7 @@ const Map = () => {
 
     const positionMarkerIcon = (orientation: number) => ({
         path: arrowPath,
-        fillColor: editModeReference.current ? "#ff0000" : "#00ccff",
+        fillColor: editModeReference.current ? POSITION_MARKER_COLOR : POSITION_MARKER_GEO_COLOR,
         fillOpacity: 0.8,
         strokeWeight: 0,
         rotation: orientation,
@@ -216,14 +219,7 @@ const Map = () => {
             positionMarker.current.setPosition(currentGeoLocation)
         }
         
-    }, [currentGeoLocation])
-
-    useEffect(() => {
-        if(positionMarker.current && !editModeReference.current) {
-            positionMarker.current.setIcon(positionMarkerIcon(currentOrientation))
-        }
-        
-    }, [currentOrientation])
+    }, [currentGeoLocation, editModeReference.current])
 
     const invaderIcon = (invader: Invader, params={} as any) => {
         const size = params.selected ? 40 : 30
@@ -326,12 +322,10 @@ const Map = () => {
     }, [currentHint])
 
     useEffect(() => {
-        // if(map.current) {
-        //     google.maps.event.clearListeners(map.current, 'click');
-        // }
         positionMarker.current?.setDraggable(editModeReference.current);
         positionMarker.current?.setIcon(positionMarkerIcon(currentOrientation))
-    }, [editModeReference.current])
+    }, [currentOrientation, editModeReference.current])
+
 
     useEffect(() => {
         if(map.current) {
@@ -371,7 +365,6 @@ const Map = () => {
 
         placesService.current?.findPlaceFromQuery(request, function(results: any, status: any) {
             if (status === google.maps.places.PlacesServiceStatus.OK) {
-            
                 const gPosition = results[0].geometry.location
                 positionMarker.current?.setPosition(gPosition)
                 panorama.current?.setPosition(gPosition)
@@ -421,7 +414,7 @@ const Map = () => {
             />
         }
         <Menu>
-            <div className="btn" onClick={() => newHint(currentPosition)}>
+            <div className="btn" onClick={() => newHint(editModeReference.current ? currentPosition : currentGeoLocation)}>
                 <div className="icon new-hint"/>
                 <div className="desktop-label">Nouvel indice</div>
             </div>

@@ -3,14 +3,11 @@ import React, { useContext, useEffect, useState } from 'react'
 import _ from "lodash"
 import "moment/locale/fr"
 import './App.scss';
-import './Menu.scss';
-import ApiClient from './ApiClient'
+import './Icons/Icons.scss';
 import Map from "./Map"
-import Menu from "./Menu"
 import { Outlet } from 'react-router-dom'
 import { AppContext } from './AppProvider';
 import InitialLoading from './InitialLoading';
-import Collection from './Collection/Collection';
 
 
 
