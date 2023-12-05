@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import _ from "lodash"
 import "moment/locale/fr"
 import './App.scss';
-import './Icons/Icons.scss';
+import './Icons.scss';
 import Map from "./Map"
 import { Outlet } from 'react-router-dom'
 import { AppContext } from './AppProvider';
