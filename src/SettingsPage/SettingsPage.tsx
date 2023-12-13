@@ -1,9 +1,6 @@
-import { useContext } from "react"
 import ApiClient from "../ApiClient"
 import Menu from "../Menu"
-import { AppContext } from "../AppProvider"
 import './SettingsPage.scss'
-import _ from "lodash"
 import GeoLocationRequester from "./GeoLocationRequester/GeoLocationRequester"
 import DeviceOrientationRequester from "./DeviceOrientationRequester/DeviceOrientationRequester"
 

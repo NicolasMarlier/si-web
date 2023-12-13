@@ -7,13 +7,14 @@ const requestPermissionDeviceOrientation = async() => {
     }
     const requestPermission = (DeviceOrientationEvent as unknown as DeviceOrientationEventiOS).requestPermission;
     const iOS = typeof requestPermission === 'function';
-    let orientationState = ""
     if (iOS) {
-        orientationState = await requestPermission()
+        await requestPermission()
     }
 }
 
-export default {
+const Permissions = {
     requestPermissionGeoLocation,
     requestPermissionDeviceOrientation
 }
+
+export default Permissions

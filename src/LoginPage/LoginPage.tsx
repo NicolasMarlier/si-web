@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from "react-router-dom";
-import ApiClient from './ApiClient'
-import './Login.scss'
+import ApiClient from '../ApiClient'
+import './LoginPage.scss'
 
-const Login:React.FC = () => {
+const LoginPage = () => {
     const [loading, setLoading] = useState(false)
     const [errorMessage, setErrorMessage] = useState(null as string | null)
     const [uuid, setUuid] = useState("")
@@ -26,16 +26,16 @@ const Login:React.FC = () => {
         <div className="login-frame">
             <div className="logo-container"/>
             <div className="input-frame">
-                <input value={uuid} onChange={e => setUuid(e.target.value)}/>
+                <input value={uuid} data-form-type="password" onChange={e => setUuid(e.target.value)}/>
             </div>
 
             <div className="btn block" onClick={login}>
-                <div className="text">LOGIN</div>
+                <div className="text">CONNEXION</div>
             </div>
-            { loading && <div>Loading...</div>}
+            { loading && <div>CHARGEMENT...</div>}
             { errorMessage && <div>{ errorMessage }</div>}
         </div>
     </div>
 }
 
-export default Login;
+export default LoginPage;

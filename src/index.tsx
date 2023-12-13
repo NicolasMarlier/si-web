@@ -1,9 +1,8 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import Collection from './Collection/Collection'
-import Login from './Login'
+import LoginPage from './LoginPage/LoginPage'
 import SettingsPage from './SettingsPage/SettingsPage'
 
 import reportWebVitals from './reportWebVitals';
@@ -28,7 +27,7 @@ const router = createBrowserRouter(
         element={<Navigate to="/map" replace />}/>
       <Route
           path="/login"
-          element={<Login/>}/>
+          element={<LoginPage/>}/>
       <Route
         path="/"
         element={<AppProvider><App /></AppProvider>}
