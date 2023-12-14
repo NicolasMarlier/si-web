@@ -36,10 +36,19 @@ const router = createBrowserRouter(
           path="collection"
           element={<Collection />}/>
         <Route
+          path="collection/:invader_name"
+          element={<Collection/>}/>
+        <Route
           path="map"
           element={<div/>}/>
         <Route
+          path="map/:invader_name"
+          element={<div/>}/>
+        <Route
           path="place"
+          element={<div/>}/>
+        <Route
+          path="place/:invader_name"
           element={<div/>}/>
         <Route
           path="stats"

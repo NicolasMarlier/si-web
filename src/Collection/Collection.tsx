@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
 
 import _ from "lodash"
 import InvaderComponent from './InvaderComponent';
@@ -15,6 +16,13 @@ const Collection = () => {
   const [mode, setMode] = useState("date_flash" as Mode)
   const [currentInvader, setCurrentInvader] = useState(null as Invader | null)
 
+  const navigate = useNavigate()
+  const { invader_name } = useParams()
+
+  useEffect(() => {
+    setCurrentInvader(_.find(invaders, {name: invader_name}) || null)
+  }, [invader_name])
+
   useEffect(() => {
     setSortedInvaders(_.sortBy(invaders, mode).reverse())
   }, [mode, invaders])
@@ -24,12 +32,12 @@ const Collection = () => {
       <div className="collection">
         { sortedInvaders.map(invader =>
           <InvaderComponent
-            onClick={() => setCurrentInvader(invader)}
+            onClick={() => navigate(`/collection/${invader.name}`)}
             key={invader.name}
             invader={invader}/>
         )}
       </div>
-      { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => setCurrentInvader(null)}/>}
+      { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => navigate("/collection")}/>}
       <Menu>
         <div className={`btn round ${mode=='date_pos' ? 'active' : ''}`} onClick={() => setMode("date_pos") }>
           <div className="icon trowel"></div>

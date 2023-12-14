@@ -15,16 +15,18 @@ const InvaderModal = (props: Props) => {
 
     return <div className="invader-modal">
         
-        
-        <div className="built-at">{ moment(date_pos).format("YYYY") }</div>
-        <div className="name">{ name }</div>
-        <div className="score">{ point }</div>
-        
-        <div className="flashed-at">Flashé { moment(date_flash).locale("fr").format('dddd D MMMM à HH:mm') }</div>
+        { !positionUpdated && <>
+            <div className="built-at">{ moment(date_pos).format("YYYY") }</div>
+            <div className="name">{ name }</div>
+            <div className="score">{ point }</div>
+            
+            <div className="flashed-at">Flashé { moment(date_flash).locale("fr").format('dddd D MMMM à HH:mm') }</div>
+        </>}
 
-        <div className={`btn ${positionUpdated ? '' : 'hide'}`} onClick={() => onSave()}>
+        { positionUpdated && <div className="btn" onClick={() => onSave()}>
             <div className="icon save"/>
-        </div>
+            <div className="desktop-label">Mettre à jour la position</div>
+        </div>}
         
     </div>
 }

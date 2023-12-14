@@ -28,26 +28,16 @@
         font-weight: 600;
         font-family: 'Gill Sans';
     }
-
-    .btn {
-        width: 50px;
-        &.green {
-            border-color: green;
-            .icon {
-                background-color: green;
-            }
-        }
-
-        &.red {
-            border-color: red;
-            .icon {
-                background-color: red;
-            }
-        }
-
-        &.hide {
-            visibility: hidden;
-        }
+    .flashed-at {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 30px;
+        text-align: center;
+        font-size: 12px;
+        line-height: 30px;
+        color: #aaa;
     }
 }
 

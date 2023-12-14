@@ -1,5 +1,5 @@
-import React, {useEffect, useState, useRef, useContext, useCallback } from "react"
-import { useLocation } from 'react-router-dom'
+import React, {useEffect, useState, useRef, useContext } from "react"
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import "./Map.scss"
 import _ from "lodash"
 import { AppContext } from "./AppProvider"
@@ -13,6 +13,7 @@ const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 
 
 const POSITION_MARKER_COLOR = "#00acff"
 const POSITION_MARKER_GEO_COLOR = "#2bcc23"
+
 
 
 const hintColor = (hint: Hint) => {
@@ -64,6 +65,13 @@ const Map = () => {
     const editModeReference = useRef(false)
     const [containerClass, setContainerClass] = useState("")
     const location = useLocation();
+    const navigate = useNavigate();
+
+    const { invader_name } = useParams()
+
+    useEffect(() => {
+        setSelectedInvader(_.find(invaders, {name: invader_name}) || null)
+    }, [invader_name])
 
     const positionMarkerIcon = (orientation: number) => ({
         path: arrowPath,
@@ -76,12 +84,9 @@ const Map = () => {
     
     const clickOnMap = (e: any) => {
         setCurrentHint(null)
-        setSelectedInvader(null)
+        navigate(`/${editModeReference.current ? 'place' : 'map'}/`)
     
-        if(editModeReference.current) {
-            setCurrentHint(null)
-            setSelectedInvader(null)
-    
+        if(editModeReference.current) {    
             const gPosition = e.latLng
             positionMarker.current?.setPosition(gPosition)
             panorama.current?.setPosition(gPosition)
@@ -93,12 +98,13 @@ const Map = () => {
 
     useEffect(() => {
         setContainerClass({
-            "/map": "full-map",
-            "/place": "map-and-pano"
-        }[location.pathname] || "hidden")
+            "map": "full-map",
+            "place": "map-and-pano"
+        }[location.pathname.split("/")[1]] || "hidden")
         editModeReference.current = ({
-            "/place": true
-        }[location.pathname] || false)
+            "place": true
+        }[location.pathname.split("/")[1]] || false)
+        console.log(location)
     }, [location]);
 
     const defaultZoom = 16
@@ -251,11 +257,12 @@ const Map = () => {
                     
                     marker.addListener("click", () => {
                         setCurrentHint(null)
-                        setSelectedInvader(invader)
+                        navigate(`/${editModeReference.current ? 'place' : 'map'}/${invader.name}`)
                     })
                     invaderMarkers.current[invader.name] = marker
                 }
             })
+            selectSelectedInvaderMarker()
         }
     }, [invaders, map.current])
 
@@ -272,8 +279,8 @@ const Map = () => {
     const selectSelectedInvaderMarker = () => {
         if(selectedInvaderReference.current?.name && selectedInvaderReference.current?.position) {
             const marker = invaderMarkers.current[selectedInvaderReference.current?.name]
-            marker.setIcon(invaderIcon(selectedInvaderReference.current, {selected: true}))
-            marker.setDraggable(editModeReference.current)
+            marker?.setIcon(invaderIcon(selectedInvaderReference.current, {selected: true}))
+            marker?.setDraggable(editModeReference.current)
             map.current?.panTo(selectedInvaderReference.current.position)
             if(editModeReference.current) {
                 panorama.current?.setPosition(selectedInvaderReference.current.position)
@@ -340,7 +347,7 @@ const Map = () => {
                         map: map.current,
                     });
                     marker.addListener('click', () => {
-                        setSelectedInvader(null)
+                        navigate(`/${editModeReference.current ? 'place' : 'map'}`)
                         setCurrentHint(hint)
                     })
                     return marker
@@ -408,7 +415,6 @@ const Map = () => {
                         selectedInvaderReference.current.position = selectedInvaderPosition
                     }
                     moveInvader(selectedInvader, selectedInvaderPosition)
-                    setSelectedInvader(null)
                 }
             }}
             />

@@ -1,4 +1,6 @@
 import { useContext, PropsWithChildren} from "react"
+import { useParams } from 'react-router-dom'
+
 import { NavLink } from 'react-router-dom'
 import { AppContext } from "./AppProvider"
 import loadingGif from './icons/loading.gif'
@@ -8,19 +10,20 @@ import './Menu.scss';
 const Menu = (props: PropsWithChildren) => {
     const { children } = props
     const { loading } = useContext(AppContext)
+    const { invader_name } = useParams()
 
     return (
         <div className="menu">
             <div className="menu-container">
                 <div className="nav-items">
                     <NavLink
-                        to="/map"
+                        to={invader_name ? `/map/${invader_name}` : "/map"}
                         className="btn">
                             <div className="icon map"/>
                             <div className="desktop-label">Carte</div>
                     </NavLink>
                     <NavLink
-                        to="/collection"
+                        to={invader_name ? `/collection/${invader_name}` : "/collection"}
                         className="btn">
                             <div className="icon collection"/>
                             <div className="desktop-label">Collection</div>
