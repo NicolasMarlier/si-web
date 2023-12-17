@@ -11,7 +11,7 @@ interface Props {
 const InvaderSelector:React.FC<Props> = (props) => {
     const {invaders, hints, onSelect, onSelectHint} = props
     return <div id="invaders-selector">
-        { invaders.map(invader => {
+        { _.sortBy(invaders, 'date_flash').map(invader => {
             
             const matchingHint = _.find(hints, (h) => h.description.replace("-", "_").includes(invader.name))
             return <div
