@@ -13,7 +13,7 @@ const InvaderSelector:React.FC<Props> = (props) => {
     return <div id="invaders-selector">
         { invaders.map(invader => {
             
-            const matchingHint = _.find(hints, (h) => h.description.includes(invader.name))
+            const matchingHint = _.find(hints, (h) => h.description.replace("-", "_").includes(invader.name))
             return <div
                 className="invader-selector"
                 key={invader.name}
