@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef, useContext } from "react"
+import React, {useEffect, useState, useRef, useContext, useCallback } from "react"
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import "./Map.scss"
 import _ from "lodash"
@@ -73,6 +73,32 @@ const Map = () => {
         setSelectedInvader(_.find(invaders, {name: invader_name}) || null)
     }, [invader_name])
 
+    const initiateNewHint = () => newHint(editModeReference.current ? currentPosition : currentGeoLocation)
+    const keyDownListener = useCallback((e: KeyboardEvent) => {
+        if(e.target && (e.target as any).tagName !== "INPUT") {
+            if(e.code === 'Space') {
+                initiateNewHint()
+                e.stopPropagation()
+            }
+            if(e.code === 'Backspace') {
+                e.stopPropagation()
+                e.preventDefault()
+                deleteCurrentHint()
+            }
+        }
+    }, [currentHint])
+    useEffect(
+        () => {
+          window.addEventListener('keydown', keyDownListener);
+    
+          return () => {
+            window.removeEventListener('keydown', keyDownListener);
+          };
+        },
+        [currentHint]
+    );
+    
+
     const positionMarkerIcon = (orientation: number) => ({
         path: arrowPath,
         fillColor: editModeReference.current ? POSITION_MARKER_COLOR : POSITION_MARKER_GEO_COLOR,
@@ -104,7 +130,6 @@ const Map = () => {
         editModeReference.current = ({
             "place": true
         }[location.pathname.split("/")[1]] || false)
-        console.log(location)
     }, [location]);
 
     const defaultZoom = 16
@@ -139,7 +164,6 @@ const Map = () => {
             //@ts-ignore
             const { PlacesService } = await google.maps.importLibrary("places") as google.maps.PlacesLibrary;
 
-            console.log(google.maps.SymbolPath.CIRCLE)
             map.current = new Map(document.getElementById("map") as HTMLElement, {
                 center: currentGeoLocation,
                 zoom: defaultZoom,
@@ -420,7 +444,7 @@ const Map = () => {
             />
         }
         <Menu>
-            <div className="btn" onClick={() => newHint(editModeReference.current ? currentPosition : currentGeoLocation)}>
+            <div className="btn" onClick={initiateNewHint}>
                 <div className="icon new-hint"/>
                 <div className="desktop-label">Nouvel indice</div>
             </div>

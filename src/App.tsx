@@ -14,6 +14,7 @@ import InitialLoading from './InitialLoading';
 const App:React.FC = () => {
   const { initialLoading } = useContext(AppContext)
 
+
   return (
     
       <div className="App">

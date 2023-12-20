@@ -73,6 +73,7 @@ export const AppProvider = ({ children }: any) => {
             setCurrentOrientation(Math.round((event as any).webkitCompassHeading || 0))
         });
     }
+    
 
 
     const newHint = async(position: Position) => {
