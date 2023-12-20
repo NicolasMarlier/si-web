@@ -86,7 +86,7 @@ const Map = () => {
                 deleteCurrentHint()
             }
         }
-    }, [currentHint])
+    }, [currentHint, currentPosition, currentGeoLocation])
     useEffect(
         () => {
           window.addEventListener('keydown', keyDownListener);
@@ -95,7 +95,7 @@ const Map = () => {
             window.removeEventListener('keydown', keyDownListener);
           };
         },
-        [currentHint]
+        [currentHint, currentPosition, currentGeoLocation]
     );
     
 
