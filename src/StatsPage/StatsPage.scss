@@ -8,6 +8,7 @@
     }
 
     .counts {
+        flex: 0 0 50px;
         padding: 50px 0;
         display: flex;
         justify-content: space-around;
@@ -23,5 +24,16 @@
             color: #aaa;
         }
     }
-    
+}
+
+@media screen and (max-width:640px) {
+    .stats-page {
+        padding: 0 0 50px 0;
+        .counts {
+            padding: 0;
+            .label {
+                font-size: 20px;
+            }
+        }
+    }
 }

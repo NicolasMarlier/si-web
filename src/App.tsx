@@ -4,7 +4,7 @@ import _ from "lodash"
 import "moment/locale/fr"
 import './App.scss';
 import './Icons.scss';
-import Map from "./Map"
+import Map from "./MapsPage/Map"
 import { Outlet } from 'react-router-dom'
 import { AppContext } from './AppProvider';
 import InitialLoading from './InitialLoading';

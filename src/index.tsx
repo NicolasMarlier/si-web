@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import Collection from './Collection/Collection'
+import Collection from './CollectionPage/Collection'
 import LoginPage from './LoginPage/LoginPage'
 import SettingsPage from './SettingsPage/SettingsPage'
 

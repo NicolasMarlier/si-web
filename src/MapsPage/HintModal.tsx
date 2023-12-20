@@ -15,7 +15,7 @@ const HintModal = (props: Props) => {
         setCurrentDescription(description)
     },[description])
 
-    const descriptionUpdated = currentDescription != description
+    const descriptionUpdated = currentDescription !== description
     
 
     return <div className="hint-modal">
@@ -23,6 +23,7 @@ const HintModal = (props: Props) => {
             <div className="icon delete"/>
         </div>
         <input
+            autoFocus
             value={ currentDescription }
             onChange={(e) => setCurrentDescription(e.currentTarget.value)}
             />

@@ -47,7 +47,6 @@ export const AppProvider = ({ children }: any) => {
     const [loadingMap, setLoadingMap] = useState(true)
 
     const [loading, setLoading] = useState(true)
-    const [hintWasJustAdded, setHintWasJustAdded] = useState(false)
 
     const [currentHint, setCurrentHint] = useState(null as Hint | null)
 
@@ -77,18 +76,19 @@ export const AppProvider = ({ children }: any) => {
 
 
     const newHint = async(position: Position) => {
-        setHintWasJustAdded(true)
-        await ApiClient.insertHint({
+        const hint = {
+            id: undefined,
             description: "",
             position: position,
             placed_at: (new Date()).toString()
-        })
+        }
+        setCurrentHint(hint)
+        await ApiClient.insertHint(hint)
         await fetchHints()
     }
     useEffect(() => {
-        if(hintWasJustAdded) {
+        if(currentHint && currentHint.id === undefined) {
             setCurrentHint(_.maxBy(hints, 'id') || null)
-            setHintWasJustAdded(false)
         }
     }, [hints])
 
