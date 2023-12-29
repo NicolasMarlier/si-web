@@ -1,5 +1,8 @@
 import axios from 'axios'
 import _ from "lodash"
+
+import Cache from './Cache'
+
 const OFFICIAL_BASE_PATH = "https://space-invaders.com/api"
 const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UID
 
@@ -51,22 +54,22 @@ const fetchInvaders = (): Promise<any> => {
 
 
 const syncInvaders = async() => {
-    const officialInvaders = await fetchInvadersOffical()
+    const {
+        invaders: officialInvaders,
+        cities: cities
+    } = await fetchInvadersOffical()
+    Cache.set('cities', cities)
     return syncApiFromOfficalApi(officialInvaders)
 }
 
-const fetchInvadersOffical = (): Promise<Invader[]> => {
-    return axios.get(`${OFFICIAL_BASE_PATH}/flashesV2/?uid=${UID}`)
-        .then(({data: {invaders}}) => Object.values(invaders) as Invader[])
-}
+const fetchInvadersOffical = (): Promise<{invaders: Invader[], cities: {[name: string]: [count: number]}}> => axios
+    .get(`${OFFICIAL_BASE_PATH}/flashesV2/?uid=${UID}`)
+    .then(({data: {invaders, cities}}) => ({
+        invaders: (Object.values(invaders) as Invader[]),
+        cities: (cities as {[name: string]: [count: number]}),
+    }))
 
-const fetchInvaderCached = (): Promise<Invader[]> => new Promise((resolve) => {
-    resolve(JSON.parse(localStorage.getItem("invaders_cache") || "{}"))
-})
-
-const listInvaders = (): Promise<Invader[]> => {
-    return fetchInvaders()
-}
+const listInvaders = (): Promise<Invader[]> => fetchInvaders()
 
 const updateInvader = (invader: Invader) => axios
     .put(
@@ -114,6 +117,27 @@ const listHints = (): Promise<any> => axios
     .then(({data: hints}) => hints as Hint[])
     .catch(handleError)
 
+const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => _.map(
+    _.groupBy(
+        _.filter(invaders, 'position'),
+        invader => invader.city_id
+    ),
+    (invaders, _city_id) => {
+        const invader = invaders[0]
+        const slug = invader.name.split("_")[0]
+        const cityHints = _.filter(hints, hint => hint.description.startsWith(`${slug}-`))
+        return {
+            id: invader.city_id,
+            name: invader.city_name,
+            slug: slug,
+            position: invader.position || {lat: 0, lng: 0},
+            invaders_count: (Cache.get('cities') || {})[invader.city_name] || 0,
+            flashs_count: invaders.length,
+            hints_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") == -1).length,
+            deads_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") > -1).length
+        }
+    }
+)
 
 export default {
     login,
@@ -124,5 +148,6 @@ export default {
     insertHint,
     updateHint,
     listHints,
-    deleteHint
+    deleteHint,
+    computeCitiesData
 }

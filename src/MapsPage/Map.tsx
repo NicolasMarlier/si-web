@@ -8,6 +8,7 @@ import ApiClient from "../ApiClient"
 import InvaderModal from "./InvaderModal"
 import Menu from "../Menu"
 import InvaderSelector from "./InvaderSelector"
+import { cityIcon } from "./Icons"
 
 const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1"
 
@@ -48,6 +49,8 @@ const selectedHintIcon = (hint: Hint) => ({
 const Map = () => {
     const invaderMarkers = useRef({} as {[key: string]: google.maps.Marker})
     const hintMarkers = useRef({} as {[key: string]: google.maps.Marker})
+    const cityMarkers = useRef({} as {[key: string]: google.maps.Marker})
+
     const map = useRef(undefined as google.maps.Map | undefined)
     const placesService = useRef(undefined as any | undefined)
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
@@ -107,6 +110,23 @@ const Map = () => {
         rotation: orientation,
         scale: 2
     })
+
+    const showCityMarkers = () => {
+        const currentZoom = map.current?.getZoom()
+        return currentZoom && currentZoom <= 12
+    }
+    const zoomChanged = () => {
+        if(showCityMarkers()) {
+            _.forEach(invaderMarkers.current, marker => marker.setMap(null))
+            _.forEach(hintMarkers.current, marker => marker.setMap(null))
+            _.forEach(cityMarkers.current, marker => marker.setMap(map.current || null))
+        }
+        else {
+            _.forEach(invaderMarkers.current, marker => marker.setMap(map.current || null))
+            _.forEach(hintMarkers.current, marker => marker.setMap(map.current || null))
+            _.forEach(cityMarkers.current, marker => marker.setMap(null))
+        }
+    }
     
     const clickOnMap = (e: any) => {
         setCurrentHint(null)
@@ -193,6 +213,7 @@ const Map = () => {
             })
 
             map.current?.addListener("click", clickOnMap)
+            map.current?.addListener('zoom_changed', zoomChanged);
     
             placesService.current = new PlacesService(map.current);
             
@@ -273,7 +294,7 @@ const Map = () => {
                         position: invader.position,
                         icon: invaderIcon(invader, {selected: selectedInvaderReference.current?.name === invader.name}),
                         draggable: false,
-                        map: map.current,
+                        map: showCityMarkers() ? null : map.current,
                     });
                     marker.addListener("dragend", (e: any) => {
                         setSelectedInvaderPosition({lat: e.latLng.lat(), lng: e.latLng.lng()})
@@ -289,6 +310,56 @@ const Map = () => {
             selectSelectedInvaderMarker()
         }
     }, [invaders, map.current])
+
+
+    useEffect(() => {
+        if(map.current) {
+            cityMarkers.current ||= {}
+            const citiesData = ApiClient.computeCitiesData(invaders, hints)
+            console.log(citiesData)
+            citiesData.forEach(city => {
+                if(cityMarkers.current[city.id]) {
+                    cityMarkers.current[city.id].setIcon(cityIcon(city))
+                }
+                else {
+                    let marker = new google.maps.Marker({
+                        position: city.position,
+                        icon: cityIcon(city),
+                        draggable: false,
+                        map: showCityMarkers() ? map.current : null,
+                    });
+                    marker.addListener('click', () => {
+                        map.current?.panTo(city.position)
+                        map.current?.setZoom(13)
+                    })
+                    cityMarkers.current[city.id] = marker
+                }
+            })
+            _.filter(invaders, "position").forEach(invader => {
+                if(invaderMarkers.current[invader.name]) {
+                    invaderMarkers.current[invader.name].setPosition(invader.position)
+                }
+                else {
+                    let marker = new google.maps.Marker({
+                        position: invader.position,
+                        icon: invaderIcon(invader, {selected: selectedInvaderReference.current?.name === invader.name}),
+                        draggable: false,
+                        map: map.current,
+                    });
+                    marker.addListener("dragend", (e: any) => {
+                        setSelectedInvaderPosition({lat: e.latLng.lat(), lng: e.latLng.lng()})
+                    });
+                    
+                    marker.addListener("click", () => {
+                        setCurrentHint(null)
+                        navigate(`/${editModeReference.current ? 'place' : 'map'}/${invader.name}`)
+                    })
+                    invaderMarkers.current[invader.name] = marker
+                }
+            })
+            selectSelectedInvaderMarker()
+        }
+    }, [invaders, hints, map.current])
 
 
     const unselectSelectedInvaderMarker = () => {
@@ -368,7 +439,7 @@ const Map = () => {
                         position: hint.position,
                         icon: hintIcon(hint),
                         zIndex: 10,
-                        map: map.current,
+                        map: showCityMarkers() ? null : map.current,
                     });
                     marker.addListener('click', () => {
                         navigate(`/${editModeReference.current ? 'place' : 'map'}`)
@@ -403,7 +474,6 @@ const Map = () => {
                 setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
             }
         });
-        
     }
 
     return <div

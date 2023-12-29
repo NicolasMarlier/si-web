@@ -35,3 +35,14 @@ interface Hint {
     placed_at: string
     position: Position
 }
+
+interface City {
+    id: integer
+    name: string
+    slug: string
+    position: Position
+    invaders_count: integer
+    flashs_count: integer
+    hints_count: integer
+    deads_count: integer
+}
