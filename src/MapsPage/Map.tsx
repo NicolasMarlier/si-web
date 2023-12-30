@@ -9,6 +9,7 @@ import InvaderModal from "./InvaderModal"
 import Menu from "../Menu"
 import InvaderSelector from "./InvaderSelector"
 import { cityIcon } from "./Icons"
+import { off } from "process"
 
 const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1"
 
@@ -73,7 +74,13 @@ const Map = () => {
     const { invader_name } = useParams()
 
     useEffect(() => {
-        setSelectedInvader(_.find(invaders, {name: invader_name}) || null)
+        if(invader_name?.startsWith("HINT-")) {
+            const id = parseInt(invader_name.replace("HINT-", ""))
+            setCurrentHint(_.find(hints, {id}) || null)
+        }
+        else {
+            setSelectedInvader(_.find(invaders, {name: invader_name}) || null)
+        }
     }, [invader_name])
 
     const initiateNewHint = () => newHint(editModeReference.current ? currentPosition : currentGeoLocation)
@@ -359,16 +366,16 @@ const Map = () => {
     const unselectSelectedHintMarker = () => {
         if(selectedHintReference.current?.id) {
             const marker = hintMarkers.current[selectedHintReference.current?.id]
-            marker.setIcon(hintIcon(selectedHintReference.current))
-            marker.setDraggable(false)
+            marker?.setIcon(hintIcon(selectedHintReference.current))
+            marker?.setDraggable(false)
         }
     }
 
     const selectSelectedHintMarker = () => {
         if(selectedHintReference.current?.id) {
             const marker = hintMarkers.current[selectedHintReference.current?.id]
-            marker.setIcon(selectedHintIcon(selectedHintReference.current))
-            marker.setDraggable(editModeReference.current)
+            marker?.setIcon(selectedHintIcon(selectedHintReference.current))
+            marker?.setDraggable(editModeReference.current)
             map.current?.panTo(selectedHintReference.current.position)
             if(editModeReference.current) {
                 panorama.current?.setPosition(selectedHintReference.current.position)
@@ -421,6 +428,7 @@ const Map = () => {
                     return marker
                 }
             )
+            selectSelectedHintMarker()
         }
     }, [hints, map.current])
     

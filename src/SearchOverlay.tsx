@@ -49,7 +49,7 @@ const SearchOverlay = () => {
     useEffect(() => {
         setItems([
             ...invaders.map(invader => ({kind: 'invader', value: invader})),
-            //...hints.map(hint => ({kind: 'hint', value: hint}))
+            ...hints.map(hint => ({kind: 'hint', value: hint}))
         ])
     }, [hints, invaders])
 
@@ -67,7 +67,7 @@ const SearchOverlay = () => {
 
     const invaderDetails = ({name, hosted_image_30_url}: Invader) => ({
         id: ['invader', name].join("|"),
-        render: <div>
+        render: <div className="item">
             <img className="icon" src={hosted_image_30_url}/>
             {name}
         </div>,
@@ -77,8 +77,8 @@ const SearchOverlay = () => {
 
     const hintDetails = ({description, id}: Hint) => ({
         id: ['hint', (id || '?').toString()].join("|"),
-        render: <div>
-            <div className="hint-icon">i</div>
+        render: <div className="item">
+            <div className="icon puzzle"/>
             {description}
         </div>,
         searchable: description,
