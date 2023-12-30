@@ -46,3 +46,8 @@ interface City {
     hints_count: integer
     deads_count: integer
 }
+
+interface Searchable {
+    kind: string
+    value: Hint | Invader
+}

@@ -8,6 +8,7 @@ import Map from "./MapsPage/Map"
 import { Outlet } from 'react-router-dom'
 import { AppContext } from './AppProvider';
 import InitialLoading from './InitialLoading';
+import SearchOverlay from './SearchOverlay';
 
 
 
@@ -24,6 +25,7 @@ const App:React.FC = () => {
           <div className="MainFrame h-100">
             <Outlet/>
             <Map/>
+            <SearchOverlay/>
           </div>
         </div>
       }

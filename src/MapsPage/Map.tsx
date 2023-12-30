@@ -271,11 +271,11 @@ const Map = () => {
     }, [currentGeoLocation, editModeReference.current])
 
     const invaderIcon = (invader: Invader, params={} as any) => {
-        const size = params.selected ? 40 : 30
+        const size = params.selected ? 60 : 30
         return {
             url: invader.hosted_image_300_url,
             scaledSize: new google.maps.Size(size, size),
-            anchor: new google.maps.Point(10, 10),
+            anchor: new google.maps.Point(size / 2, size / 2),
         }
     }
     
