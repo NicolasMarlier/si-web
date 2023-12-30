@@ -12,6 +12,7 @@ const PARIS_CENTER = {
 interface Context {
     hints: Hint[]
     invaders: Invader[]
+    cities: City[]
     currentGeoLocation: GeoPosition
     currentOrientation: number
 
@@ -41,6 +42,7 @@ export const AppContext = createContext({
 export const AppProvider = ({ children }: any) => {
     const [status, setStatus] = useState("")
     const [hints, setHints] = useState([] as Hint[])
+    
     const [initialLoading, setInitialLoading] = useState(true)
     const [loadingHints, setLoadingHints] = useState(true)
     const [loadingInvaders, setLoadingInvaders] = useState(true)
@@ -58,6 +60,8 @@ export const AppProvider = ({ children }: any) => {
     
     const [timer, setTimer] = useState(0)
     const [invaders, setInvaders] = useState([] as Invader[])
+    const [cities, setCities] = useState([] as City[])
+    
     
     useEffect(() => {
         fetchHints()
@@ -92,6 +96,10 @@ export const AppProvider = ({ children }: any) => {
             setCurrentHint(_.maxBy(hints, 'id') || null)
         }
     }, [hints])
+
+    useEffect(() => {
+        setCities(ApiClient.computeCitiesData(invaders, hints))
+    }, [hints, invaders])
 
     useEffect(() => {
         if(currentGeoLocation.lat) {
@@ -179,6 +187,7 @@ export const AppProvider = ({ children }: any) => {
         initialLoading,
         hints,
         invaders,
+        cities,
         fetchHints,
         currentGeoLocation,
         deleteHint,

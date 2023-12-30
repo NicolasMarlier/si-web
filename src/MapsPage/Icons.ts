@@ -1,3 +1,4 @@
+import _ from "lodash"
 
 const pieChartPath = (radius: number, thickness: number, startAngle: number, endAngle: number) => {
     const smallRadius = radius - thickness
@@ -66,11 +67,103 @@ const citySvgData = (city: City) => {
     `
 }
 
+const healthBarSvg = (health: number, total: number) => {    
+    const margin = 20
+    const width = 1000
+    const height = 100
+    const grey = '#222222'
+    const green = '#2bcc23'
+
+    const bar_counts = [
+        [0, 1],
+        [10, 2],
+        [50, 3],
+        [100, 4],
+        [200, 5],
+        [300, 6],
+        [400, 7],
+        [500, 8],
+        [750, 9],
+        [1000, 10],
+    ]
+
+    const bars = Math.max(
+        ..._.filter(bar_counts, ([c, b]) => c <= total).map(([c, b]) => b)    
+    )
+
+    const barWidth = (width + margin) / bars
+
+    return `
+        <svg
+        xmlns='http://www.w3.org/2000/svg'
+        width='${width}'
+        height='${height}'
+        viewBox='0 0 ${width} ${height}'>
+        <defs>
+            <clipPath id="myClip">
+                <rect rx="${margin}" width="${width - margin}" height="${height}"/>
+            </clipPath>
+        </defs>
+
+        <g clip-path="url(#myClip)">
+
+        ${_.range(bars).map(i => {
+            const minHealth = i * total * 1.0 / bars
+            const maxHealth = (i + 1) * total * 1.0 / bars
+
+            const healthProp = (health - minHealth) / (maxHealth - minHealth)
+            if (health <= minHealth) {
+                return `<rect
+                    x="${i*barWidth}"
+                    width="${barWidth - margin}"
+                    height="${height}"
+                    fill='${grey}'/>`
+            }
+            else if (health > maxHealth) {
+                return `<rect
+                    x="${i*barWidth}"
+                    width="${barWidth - margin}"
+                    height="${height}"
+                    fill='${green}'/>`
+            }
+            else {
+                return `
+                    <rect
+                        x="${i*barWidth}"
+                        width="${barWidth - margin}"
+                        height="${height}"
+                        fill='${grey}'/>
+                    <rect
+                        x="${i*barWidth}"
+                        width="${healthProp * (barWidth - margin)}"
+                        height="${height}"
+                        fill='${green}'/>   
+                `
+            }
+            
+            }
+        )}
+        </g>
+
+    </svg>
+    `
+}
+
 const svgtoUrlData = (svg: string) => [
     "data:image/svg+xml",
     encodeURI(svg.replaceAll("\n", ' ').replaceAll(/\s+/g, ' ')).replaceAll("#", "%23")
 ].join(",")
+
+export const cityIconUrl = (city: City) => svgtoUrlData(
+    healthBarSvg(city.flashs_count, city.invaders_count)
+)
+
 export const cityIcon = (city: City) => ({
-    url: svgtoUrlData(citySvgData(city)),
-    anchor: new google.maps.Point(50, 50),
+    url: cityIconUrl(city),
+    anchor: new google.maps.Point(50, 5),
+    scaledSize: new google.maps.Size(100, 10)
 })
+
+export const healthBar = (health: number, total: number) => svgtoUrlData(
+    healthBarSvg(health, total)
+)

@@ -16,6 +16,7 @@ import {
 } from "react-router-dom";
 import { AppProvider } from './AppProvider';
 import StatsPage from './StatsPage/StatsPage';
+import TestPage from './TestPage';
 
 
 const router = createBrowserRouter(
@@ -56,6 +57,9 @@ const router = createBrowserRouter(
         <Route
           path="settings"
           element={<SettingsPage/>}/>
+        <Route
+          path="test"
+          element={<TestPage/>}/>
         
       </Route>
     </Route>

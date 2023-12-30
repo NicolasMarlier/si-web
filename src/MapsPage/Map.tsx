@@ -56,7 +56,7 @@ const Map = () => {
     const positionMarker = useRef(undefined as google.maps.Marker | undefined)
     const panorama = useRef(undefined as google.maps.StreetViewPanorama | undefined)
 
-    const { hints, invaders, moveInvader, deleteHint, setCurrentHint, currentHint, setLoadingMap, currentGeoLocation, currentOrientation, fetchHints, newHint } = useContext(AppContext)
+    const { hints, invaders, cities, moveInvader, deleteHint, setCurrentHint, currentHint, setLoadingMap, currentGeoLocation, currentOrientation, fetchHints, newHint } = useContext(AppContext)
     const [currentPosition, setCurrentPosition] = useState(currentGeoLocation as Position)
 
     const selectedHintReference = useRef(null as Hint | null)
@@ -139,8 +139,6 @@ const Map = () => {
             setCurrentPosition({lat: gPosition.lat(), lng: gPosition.lng()})
         }
     }
-
-
 
     useEffect(() => {
         setContainerClass({
@@ -315,9 +313,7 @@ const Map = () => {
     useEffect(() => {
         if(map.current) {
             cityMarkers.current ||= {}
-            const citiesData = ApiClient.computeCitiesData(invaders, hints)
-            console.log(citiesData)
-            citiesData.forEach(city => {
+            cities.forEach(city => {
                 if(cityMarkers.current[city.id]) {
                     cityMarkers.current[city.id].setIcon(cityIcon(city))
                 }
@@ -335,31 +331,8 @@ const Map = () => {
                     cityMarkers.current[city.id] = marker
                 }
             })
-            _.filter(invaders, "position").forEach(invader => {
-                if(invaderMarkers.current[invader.name]) {
-                    invaderMarkers.current[invader.name].setPosition(invader.position)
-                }
-                else {
-                    let marker = new google.maps.Marker({
-                        position: invader.position,
-                        icon: invaderIcon(invader, {selected: selectedInvaderReference.current?.name === invader.name}),
-                        draggable: false,
-                        map: map.current,
-                    });
-                    marker.addListener("dragend", (e: any) => {
-                        setSelectedInvaderPosition({lat: e.latLng.lat(), lng: e.latLng.lng()})
-                    });
-                    
-                    marker.addListener("click", () => {
-                        setCurrentHint(null)
-                        navigate(`/${editModeReference.current ? 'place' : 'map'}/${invader.name}`)
-                    })
-                    invaderMarkers.current[invader.name] = marker
-                }
-            })
-            selectSelectedInvaderMarker()
         }
-    }, [invaders, hints, map.current])
+    }, [cities, map.current])
 
 
     const unselectSelectedInvaderMarker = () => {
