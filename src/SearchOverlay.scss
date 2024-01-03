@@ -32,12 +32,20 @@
         }
         ul {
             list-style-type: none;
+            border-radius: 0 0 4px 4px;
+            overflow: hidden;
+            background-color: red;
+            margin: 0 20px 0 20px;
+            padding: 0;
 
             li {
                 height: 30px;
                 line-height: 30px;
                 .item {
                     display: flex;
+                    cursor: pointer;
+
+                    
                     .icon {
                         width: 26px;
                         height: 26px;
@@ -50,12 +58,23 @@
                     img.icon {
                         width: 26px;
                         height: 26px;
-                        margin: 2px 7px 2px 2px;
+                        margin: 2px 7px 2px 7px;
                         border-radius: 4px;
                     }
+
+                }
+
+                background-color: #ffffff;
+                &[aria-selected=true] {
+                    background: #eeeeee;
                 }
                 
             }
         }
+    }
+}
+@media screen and (max-width:640px) {
+    .search-overlay {
+        align-items: start;  
     }
 }

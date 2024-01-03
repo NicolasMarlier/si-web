@@ -17,19 +17,15 @@ const SearchOverlay = () => {
         if(e.target && (e.target as any).tagName !== "INPUT") {
             console.log(e)
             if(e.code === 'KeyF') {
+                openModal()
                 setShowModal(true)
-                e.stopPropagation()
-                e.preventDefault()
-            }
-            if(e.code === 'Escape') {
-                setShowModal(false)
                 e.stopPropagation()
                 e.preventDefault()
             }
         }
         if(e.target) {
             if(e.code === 'Escape') {
-                setShowModal(false)
+                closeModal()
                 e.stopPropagation()
                 e.preventDefault()
             }
@@ -65,13 +61,16 @@ const SearchOverlay = () => {
         }
     }
 
-    const invaderDetails = ({name, hosted_image_30_url}: Invader) => ({
+    const invaderDetails = ({name, city_name, hosted_image_30_url}: Invader) => ({
         id: ['invader', name].join("|"),
         render: <div className="item">
             <img className="icon" src={hosted_image_30_url}/>
             {name}
         </div>,
-        searchable: name,
+        searchable: [
+            name,
+            city_name
+        ].join(' '),
         url: `/map/${name}`
     })
 
@@ -138,7 +137,10 @@ const SearchOverlay = () => {
                                     style={{display: 'inline-block'}}
                                     {...getRootProps({}, {suppressRefError: true})}
                                 >
-                                    <input {...getInputProps()} autoFocus/>
+                                    <input
+                                        {...getInputProps()}
+                                        placeholder="Name an invader, a city..."
+                                        autoFocus/>
                                 </div>
                                 <ul {...getMenuProps()}>
                                 {isOpen
@@ -149,11 +151,6 @@ const SearchOverlay = () => {
                                             key: itemDetails(item).id,
                                             index,
                                             item,
-                                            style: {
-                                                backgroundColor:
-                                                highlightedIndex === index ? 'lightgray' : 'white',
-                                                fontWeight: selectedItem === item ? 'bold' : 'normal',
-                                            },
                                             })}
                                         >
                                             {itemDetails(item).render}

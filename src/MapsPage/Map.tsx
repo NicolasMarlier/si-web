@@ -300,6 +300,7 @@ const Map = () => {
                         icon: invaderIcon(invader, {selected: selectedInvaderReference.current?.name === invader.name}),
                         draggable: false,
                         map: showCityMarkers() ? null : map.current,
+                        zIndex: selectedInvaderReference.current?.name === invader.name ? 10 : 1
                     });
                     marker.addListener("dragend", (e: any) => {
                         setSelectedInvaderPosition({lat: e.latLng.lat(), lng: e.latLng.lng()})
@@ -345,9 +346,10 @@ const Map = () => {
     const unselectSelectedInvaderMarker = () => {
         if(selectedInvaderReference.current?.name && selectedInvaderReference.current?.position) {
             const marker = invaderMarkers.current[selectedInvaderReference.current?.name]
-            marker.setIcon(invaderIcon(selectedInvaderReference.current))
-            marker.setDraggable(false)
-            marker.setPosition(selectedInvaderReference.current?.position)
+            marker?.setIcon(invaderIcon(selectedInvaderReference.current))
+            marker?.setDraggable(false)
+            marker?.setPosition(selectedInvaderReference.current?.position)
+            marker?.setZIndex(1)
         }
     }
 
@@ -356,6 +358,7 @@ const Map = () => {
             const marker = invaderMarkers.current[selectedInvaderReference.current?.name]
             marker?.setIcon(invaderIcon(selectedInvaderReference.current, {selected: true}))
             marker?.setDraggable(editModeReference.current)
+            marker?.setZIndex(10)
             map.current?.panTo(selectedInvaderReference.current.position)
             if(editModeReference.current) {
                 panorama.current?.setPosition(selectedInvaderReference.current.position)
