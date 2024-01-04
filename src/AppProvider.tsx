@@ -109,7 +109,6 @@ export const AppProvider = ({ children }: any) => {
     
     
     const fetchGeoLocation = () => {
-        console.log("Fetching geolocation")
         return navigator.geolocation.watchPosition((position) => {
             setStatusGeoLocation("active")
             setCurrentGeoLocation({

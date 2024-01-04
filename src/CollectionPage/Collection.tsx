@@ -7,14 +7,15 @@ import "./Collection.scss"
 import { AppContext } from '../AppProvider';
 import InvaderZoomedComponent from './InvaderZoomedComponent';
 import Menu from "../Menu"
+import AbstractInvaderComponent from './AbstractInvaderComponent';
 
 type Mode = "date_pos" | "date_flash"
 
 const Collection = () => {
-  const { invaders } = useContext(AppContext)
-  const [sortedInvaders, setSortedInvaders] = useState([] as Invader[])
+  const { invaders, cities } = useContext(AppContext)
   const [mode, setMode] = useState("date_flash" as Mode)
   const [currentInvader, setCurrentInvader] = useState(null as Invader | null)
+  const [abstractInvadersToDisplay, setAbstractInvadersToDisplay] = useState([] as AbstractInvader[])
 
   const navigate = useNavigate()
   const { invader_name } = useParams()
@@ -24,8 +25,61 @@ const Collection = () => {
   }, [invader_name])
 
   useEffect(() => {
-    setSortedInvaders(_.sortBy(invaders, mode).reverse())
-  }, [mode, invaders])
+    // invadersAsDict = invaders.
+    // setSearchables(
+    //   _.flatten(
+    //     cities.map(city => {
+    //       _.range(1, city.invaders_count).map(index => {
+    //         invaders.find()
+    //       })
+    //     })
+    //   )
+
+      // [
+      // ...invaders.map(invader => ({
+      //   kind: 'invader',
+      //   invader_name: invader.name,
+      //   value: invader
+      // }))
+    // )
+  }, [cities])  
+
+  const cityOrder = (citySlug: string) => {
+    return {
+      'PA': 'AA',
+      'RN': 'AB',
+      'VLMO': 'AC',
+      'NA': 'AD'
+    }[citySlug] || citySlug
+  }
+
+  useEffect(() => {
+    if(mode === "date_pos") {
+        setAbstractInvadersToDisplay(
+          _.sortBy(
+            _.flatten(_.map(cities, 'abstract_invaders')),
+            (abstract_invader) => [cityOrder(abstract_invader.name.split("_")[0]), abstract_invader.name.split("_")[1].padStart(8)].join('_')
+          )
+        )
+    }
+    else if(mode === "date_flash") {
+      setAbstractInvadersToDisplay(
+          _.reverse(
+            _.sortBy(
+              _.filter(
+                _.flatten(_.map(cities, 'abstract_invaders')),
+                {kind: 'invader'}
+              ),
+              (abstract_invader) => abstract_invader.object.date_flash)
+          )
+      )
+    }
+    console.log("<", cities, ">")
+  }, [mode, cities])
+
+  useEffect(() => {
+    console.log(abstractInvadersToDisplay)
+  }, [abstractInvadersToDisplay])
 
   const showSearchModal = (e: React.MouseEvent) => {
     window.dispatchEvent(
@@ -33,15 +87,26 @@ const Collection = () => {
     )
   }
 
+  const component = (abstract_invader: AbstractInvader) => {
+    const {kind, name, object} = abstract_invader
+    switch(kind) {
+      case 'invader':
+        const invader = object as Invader
+        return <InvaderComponent
+          onClick={() => navigate(`/collection/${invader.name}`)}
+          key={name}
+          invader={invader}/>
+      default:
+        return <AbstractInvaderComponent
+          key={name}
+          abstract_invader={abstract_invader}/>
+    }
+  }
+
   return (
     <div className="collection-container">
       <div className="collection">
-        { sortedInvaders.map(invader =>
-          <InvaderComponent
-            onClick={() => navigate(`/collection/${invader.name}`)}
-            key={invader.name}
-            invader={invader}/>
-        )}
+        { abstractInvadersToDisplay.map(abstract_invader => component(abstract_invader)) }
       </div>
       { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => navigate("/collection")}/>}
       <Menu>

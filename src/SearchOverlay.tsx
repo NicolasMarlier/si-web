@@ -15,7 +15,6 @@ const SearchOverlay = () => {
 
     const keyDownListener = useCallback((e: KeyboardEvent) => {
         if(e.target && (e.target as any).tagName !== "INPUT") {
-            console.log(e)
             if(e.code === 'KeyF') {
                 openModal()
                 setShowModal(true)

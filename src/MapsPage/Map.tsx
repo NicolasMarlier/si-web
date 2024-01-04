@@ -322,8 +322,8 @@ const Map = () => {
         if(map.current) {
             cityMarkers.current ||= {}
             cities.forEach(city => {
-                if(cityMarkers.current[city.id]) {
-                    cityMarkers.current[city.id].setIcon(cityIcon(city))
+                if(cityMarkers.current[city.name]) {
+                    cityMarkers.current[city.name].setIcon(cityIcon(city))
                 }
                 else {
                     let marker = new google.maps.Marker({
@@ -336,7 +336,7 @@ const Map = () => {
                         map.current?.panTo(city.position)
                         map.current?.setZoom(13)
                     })
-                    cityMarkers.current[city.id] = marker
+                    cityMarkers.current[city.name] = marker
                 }
             })
         }

@@ -13,6 +13,13 @@ interface Invader {
     position: Position | undefined
 }
 
+interface AbstractInvader {
+    name: string,
+    city_name: string,
+    kind: string
+    object: Invader | Hint | null
+}
+
 interface InvadersGroup {
     name: string
     points: integer
@@ -37,7 +44,6 @@ interface Hint {
 }
 
 interface City {
-    id: integer
     name: string
     slug: string
     position: Position
@@ -45,9 +51,10 @@ interface City {
     flashs_count: integer
     hints_count: integer
     deads_count: integer
+    searchables?: Searchable[]
 }
 
 interface Searchable {
     kind: string
-    value: Hint | Invader
+    value: Hint | Invader | NotFound
 }
