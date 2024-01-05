@@ -13,6 +13,15 @@
     row-gap: 1em;
 }
 
+.menu {
+    .btn {
+        transition: opacity 0.2s;
+
+        &.hidden {
+            opacity: 0;
+        }
+    }
+}
 
 @media screen and (max-width:640px) {
     .collection {

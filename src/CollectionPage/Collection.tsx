@@ -110,19 +110,19 @@ const Collection = () => {
       </div>
       { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => navigate("/collection")}/>}
       <Menu>
-      { currentInvader === null && <>
-        <div className={`btn round ${mode=='date_pos' ? 'active' : ''}`} onClick={() => setMode("date_pos") }>
-          <div className="icon trowel"></div>
-          <div className="desktop-label">Ordre de pose</div>
-        </div>
-        <div className={`btn round ${mode=='date_flash' ? 'active' : ''}`} onClick={() => setMode("date_flash") }>
-          <div className="icon flash"></div>
-          <div className="desktop-label">Ordre de flash</div>
-        </div>
-        <div className='btn round' onClick={ showSearchModal }>
-          <div className="icon magnifying-glass"></div>
-          <div className="desktop-label">Search</div>
-        </div>
+      { <>
+          <div className={`btn round ${mode=='date_pos' ? 'active' : ''} ${currentInvader ? 'hidden' : ''}`} onClick={() => setMode("date_pos") }>
+            <div className="icon trowel"></div>
+            <div className="desktop-label">Ordre de pose</div>
+          </div>
+          <div className={`btn round ${mode=='date_flash' ? 'active' : ''} ${currentInvader ? 'hidden' : ''}`} onClick={() => setMode("date_flash") }>
+            <div className="icon flash"></div>
+            <div className="desktop-label">Ordre de flash</div>
+          </div>
+          <div className={`btn round ${currentInvader ? 'hidden' : ''}`} onClick={ showSearchModal }>
+            <div className="icon magnifying-glass"></div>
+            <div className="desktop-label">Search</div>
+          </div>
         </> }
       </Menu>
     </div>

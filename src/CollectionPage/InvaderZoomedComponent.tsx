@@ -1,13 +1,26 @@
 import moment from "moment"
 import "./InvaderZoomedComponent.scss"
+import { useEffect, useState } from "react"
 interface Props {
     onClose: () => void
     invader: Invader
 }
 const InvaderZoomedComponent = (props: Props) => {
     const { invader, onClose } = props
-    const {name, point, image, date_flash, date_pos, position} = invader
-    return <div onClick={onClose} className="invader-zoomed">
+    const {name, point, image, date_flash, date_pos} = invader
+    const [classNames, setClassNames] = useState([] as string[])
+
+    useEffect(() => {
+        setTimeout(() => {
+            setClassNames(['visible'])
+        }, 10)
+    }, [])
+
+    const attemptClose = () => {
+        setClassNames([])
+        setTimeout(onClose, 300)
+    }
+    return <div onClick={attemptClose} className={`invader-zoomed ${classNames.join(' ')}`}>
         <div className="flex-space"/>
         <img width="1000" height="1000" src={image}/>
         <div className="flex-space"/>
