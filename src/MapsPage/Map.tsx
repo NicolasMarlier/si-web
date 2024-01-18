@@ -9,7 +9,10 @@ import InvaderModal from "./InvaderModal"
 import Menu from "../Menu"
 import InvaderSelector from "./InvaderSelector"
 import { cityIcon } from "./Icons"
-import { off } from "process"
+import hintPng from '../icons/hint.png'
+import hintDeadPng from '../icons/hint-dead.png'
+import hintInflashablePng from '../icons/hint-inflashable.png'
+
 
 const arrowPath = "M -1 1 L -5 1 L -5 -1 L -3 -1 L -3 -3 L -1 -3 L -1 -5 L 1 -5 L 1 -3 L 3 -3 L 3 -1 L 5 -1 L 5 1 L 1 1 L 1 7 L -1 7 L -1 1"
 
@@ -28,7 +31,17 @@ const hintColor = (hint: Hint) => {
     return "#2bcc23"
 }
 
-const hintIcon = (hint: Hint) => ({
+const hintUrl = (hint: Hint) => {
+    if(hint.description.includes("DEAD")) {
+        return hintDeadPng
+    }
+    else if(hint.description.includes("INFLASHABLE")) {
+        return hintInflashablePng
+    }
+    return hintPng
+}
+
+const hintIcon2 = (hint: Hint) => ({
     path: google.maps.SymbolPath.CIRCLE,
     fillColor: hintColor(hint),
     fillOpacity: 0.25,
@@ -36,6 +49,8 @@ const hintIcon = (hint: Hint) => ({
     rotation: 0,
     scale: 20,
 })
+
+const hintIcon = (hint: Hint) => ({url: hintUrl(hint)})
 
 const selectedHintIcon = (hint: Hint) => ({
     path: google.maps.SymbolPath.CIRCLE,
