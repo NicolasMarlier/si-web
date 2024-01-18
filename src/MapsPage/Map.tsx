@@ -41,7 +41,7 @@ const hintUrl = (hint: Hint) => {
     return hintPng
 }
 
-const hintIcon2 = (hint: Hint) => ({
+const hintIcon = (hint: Hint) => ({
     path: google.maps.SymbolPath.CIRCLE,
     fillColor: hintColor(hint),
     fillOpacity: 0.25,
@@ -50,7 +50,7 @@ const hintIcon2 = (hint: Hint) => ({
     scale: 20,
 })
 
-const hintIcon = (hint: Hint) => ({url: hintUrl(hint)})
+const hintIconPng = (hint: Hint) => ({url: hintUrl(hint)})
 
 const selectedHintIcon = (hint: Hint) => ({
     path: google.maps.SymbolPath.CIRCLE,
@@ -495,7 +495,6 @@ const Map = () => {
             onSelectHint={(hint) => setCurrentHint(hint)}/>}
         { currentHint && <HintModal
             hint={currentHint}
-            onDelete={deleteCurrentHint}
             onUpdateDescription={onUpdateDescription}
             />
         }
@@ -513,10 +512,14 @@ const Map = () => {
             />
         }
         <Menu>
-            <div className="btn" onClick={initiateNewHint}>
+            { currentHint && <div className="btn" onClick={deleteCurrentHint}>
+                <div className="icon delete"/>
+                <div className="desktop-label">Supprimer l'indice</div>
+            </div> }
+            { !currentHint && <div className="btn" onClick={initiateNewHint}>
                 <div className="icon new-hint"/>
                 <div className="desktop-label">Nouvel indice</div>
-            </div>
+            </div> }
         </Menu>
     </div>
 }
