@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import ApiClient from '../ApiClient'
 import './LoginPage.scss'
@@ -13,14 +13,30 @@ const LoginPage = () => {
         setLoading(true)
         ApiClient
         .login(uuid)
-        .then(() => {
-            navigate("/");
-        })
-        .catch((e) => {
-            setErrorMessage("Oups")
-            setLoading(false)
+        .then(loggedIn => {
+            if (loggedIn) {
+                navigate("/");
+            }
+            else {
+                setErrorMessage("Oups")
+                setLoading(false)
+            }
         })
     }
+
+    useEffect(() => {
+        setLoading(true)
+        ApiClient
+            .checkLoggedIn()
+            .then(loggedIn => {
+                if (loggedIn) {
+                    navigate("/");
+                }
+                else {
+                    setLoading(false)
+                }
+            })
+    }, [])
     
     return <div className="login-container">
         <div className="login-frame">

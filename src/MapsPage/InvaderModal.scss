@@ -44,12 +44,14 @@
 @media screen and (max-width:640px) {
     .invader-modal {
         position: fixed;
-        bottom: 54px;
+        top: 0;
         right: 0;
         left: 0;
         height: 60px;
         display: flex;
         justify-content: space-between;
+        border-bottom: 1px solid #ddd;
+        border-top: none;
 
         input {
             margin: 0 0.4em 0 0;
@@ -63,14 +65,17 @@
             color: #aaa;
         }
         .score {
-            font-size: 35px;
-            color: #000;
-            font-weight: 600;
-            font-family: 'Gill Sans';
+            color: #aaa;
+            font-size: 20px;
+            font-family: sans-serif;
+            font-weight: 400;
+            flex: 100px 0 0;
+            text-align: right;
         }
         .built-at {
             color: #aaa;
-            font-size: 13px;
+            font-size: 20px;
+            flex: 100px 0 0;
         }
         .flashed-at {
             display: none;

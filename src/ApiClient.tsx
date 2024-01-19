@@ -13,11 +13,25 @@ const BASE_PATH = "https://space-invader-api.herokuapp.com"
 
 const login = (uuid: string): Promise<any> => {
     window.localStorage.setItem("uuid", uuid)
-    return axios.get(
+    return checkLoggedIn()
+}
+
+const checkLoggedIn = () => axios
+    .get(
         `${BASE_PATH}/invaders`,
         axiosConfig()
     )
-}
+    .then(() => {
+        return true
+    }
+    ).catch(error => {
+        if(error && error.response && error.response.status === 401) {
+            return false
+        }
+        else {
+            throw(error)
+        }
+    })
 
 const uuid = (): string | null => {
     return window.localStorage.getItem('uuid')
@@ -184,6 +198,7 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
 export default {
     login,
     logout,
+    checkLoggedIn,
     listInvaders,
     updateInvader,
     syncInvaders,
