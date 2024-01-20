@@ -74,7 +74,6 @@ const Collection = () => {
           )
       )
     }
-    console.log("<", cities, ">")
   }, [mode, cities])
 
   useEffect(() => {

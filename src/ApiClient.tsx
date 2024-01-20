@@ -165,6 +165,10 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
                     kind = 'invader'
                     object = invadersDict[name]
                 }
+                else if(index == 1 && slug in invadersDict) {
+                    kind = 'invader'
+                    object = invadersDict[slug]
+                }
                 else if(name in hintsDict) {
                     kind = 'hint'
                     object = hintsDict[name]
