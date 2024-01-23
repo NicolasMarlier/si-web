@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Menu from "../Menu"
 import {Chart, CategoryScale, LinearScale, TimeScale, LineElement, PointElement, BarElement, Title, Tooltip, Legend, TimeSeriesScale} from 'chart.js'; 
 import 'chartjs-adapter-moment';
@@ -53,7 +53,17 @@ const chartOptions = {
                 color: "#999"
             }
         },
-        y: {
+        score: {
+            position: 'right',
+            grid: {
+                color: "#00000011"
+            },
+            ticks: {
+                stepSize: 500,
+                color: "#999"
+            }
+        },
+        count: {
             grid: {
                 color: "#00000011"
             },
@@ -67,7 +77,9 @@ const chartOptions = {
   
 
 const StatsPage = () => {
-    const { invaders, syncInvadersFromOfficialApi } = useContext(AppContext)
+    const { invaders, cities, syncInvadersFromOfficialApi } = useContext(AppContext)
+
+    const [cumulative, setCumulative] = useState(false)
     
     const score = _.sum(_.map(invaders, "point")) + _.keys(_.groupBy(invaders, "city_id")).length * 100
     const totalFlashedCount = invaders.length
@@ -75,6 +87,7 @@ const StatsPage = () => {
 
     const buildData = () => {
         const groups = _.groupBy(invaders, i => moment(i.date_flash).format("YYYY-MM"))
+        const city_groups = _.groupBy(cities, c => moment(c.first_flash_at).format("YYYY-MM"))
         const flash_dates = _.sortBy(_.map(invaders, i => moment(i.date_flash)))
         const max_flash_date = _.max(flash_dates)
         const min_flash_date = _.min(flash_dates)
@@ -89,16 +102,27 @@ const StatsPage = () => {
         }
 
         let counts = _.map(labels, (label) => (groups[label.format("YYYY-MM")] || []).length)
+        let scores = _.map(labels, (label) => _.sum(_.map(groups[label.format("YYYY-MM")] || [], 'point')) + (city_groups[label.format("YYYY-MM")] || []).length * 100)
         for(let i = 1; i < counts.length; i++) {
-            counts[i] = counts[i] + counts[i-1]
+            if(cumulative) {
+                counts[i] = counts[i] + counts[i-1]
+                scores[i] = scores[i] + scores[i-1]
+            }
+            
         }
         return {
             labels,
             datasets: [
                 {
                     data: counts,
-                    backgroundColor: "#ffcc00cc"
-                }
+                    backgroundColor: "#ffcc00cc",
+                    yAxisID: 'count'
+                },
+                {
+                    data: scores,
+                    backgroundColor: "#ccff00cc",
+                    yAxisID: 'score'
+                },
             ],
             options: chartOptions
         }
@@ -113,9 +137,17 @@ const StatsPage = () => {
 
     const [chartData, setChartData] = useState(buildData())
 
+    useEffect(() => {
+        setChartData(buildData())
+    }, [cumulative])
+
     
     return <div className="stats-page">
         <Menu>
+            <div className="btn" onClick={() => setCumulative(!cumulative)}>
+                <div className={`icon ${cumulative ? 'chart-column' : 'chart-line'}`}/>
+                <div className="desktop-label">{ cumulative ? "Voir par mois" : "Voir l'évolution"}</div>
+            </div>
             <div className="btn" onClick={syncInvadersFromOfficialApi}>
                 <div className="icon sync"/>
                 <div className="desktop-label">Synchroniser</div>

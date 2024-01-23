@@ -53,4 +53,10 @@
     &.magnifying-glass {
       mask: url(icons/magnifying-glass.svg) no-repeat center;
     }
+    &.chart-line {
+      mask: url(icons/chart-line.svg) no-repeat center;
+    }
+    &.chart-column {
+      mask: url(icons/chart-column.svg) no-repeat center;
+    }
   }
