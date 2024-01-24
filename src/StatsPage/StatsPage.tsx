@@ -7,6 +7,7 @@ import { AppContext } from "../AppProvider";
 import moment from "moment";
 import _ from "lodash";
 import './StatsPage.scss'
+import HorizontalScrollable from "./HorizontalScrollable";
 
 Chart.register(
     BarElement,
@@ -53,22 +54,12 @@ const chartOptions = {
                 color: "#999"
             }
         },
-        score: {
-            position: 'right',
+        y: {
             grid: {
                 color: "#00000011"
             },
             ticks: {
                 stepSize: 500,
-                color: "#999"
-            }
-        },
-        count: {
-            grid: {
-                color: "#00000011"
-            },
-            ticks: {
-                stepSize: 100,
                 color: "#999"
             }
         }
@@ -85,7 +76,7 @@ const StatsPage = () => {
     const totalFlashedCount = invaders.length
 
 
-    const buildData = () => {
+    const buildData = (kind: 'count' | 'score') => {
         const groups = _.groupBy(invaders, i => moment(i.date_flash).format("YYYY-MM"))
         const city_groups = _.groupBy(cities, c => moment(c.first_flash_at).format("YYYY-MM"))
         const flash_dates = _.sortBy(_.map(invaders, i => moment(i.date_flash)))
@@ -110,20 +101,19 @@ const StatsPage = () => {
             }
             
         }
+
         return {
             labels,
-            datasets: [
-                {
+            datasets: {
+                count: [{
                     data: counts,
                     backgroundColor: "#ffcc00cc",
-                    yAxisID: 'count'
-                },
-                {
+                }],
+                score: [{
                     data: scores,
-                    backgroundColor: "#ccff00cc",
-                    yAxisID: 'score'
-                },
-            ],
+                    backgroundColor: "#ffcc00cc",
+                }],
+            }[kind],
             options: chartOptions
         }
     }
@@ -135,10 +125,12 @@ const StatsPage = () => {
         return `${number}`
     }
 
-    const [chartData, setChartData] = useState(buildData())
+    const [chartCountData, setChartCountData] = useState(buildData('count'))
+    const [chartScoreData, setChartScoreData] = useState(buildData('score'))
 
     useEffect(() => {
-        setChartData(buildData())
+        setChartCountData(buildData('count'))
+        setChartScoreData(buildData('score'))
     }, [cumulative])
 
     
@@ -154,21 +146,34 @@ const StatsPage = () => {
             </div>
         </Menu>
         
-        <div className="graph-container">
-            <Bar
-                data={chartData}
-                options={chartOptions as any}/>
-        </div>
-        <div className="counts">
-            <div>
-                <span className="count">{ format(totalFlashedCount) }</span>
-                <span className="label">flashés</span>
+        <HorizontalScrollable>
+            <div className="tab">
+                <div className="graph-container">
+                    <Bar
+                        data={chartCountData}
+                        options={chartOptions as any}/>
+                </div>
+                <div className="counts">
+                    <div>
+                        <span className="count">{ format(totalFlashedCount) }</span>
+                        <span className="label">flashés</span>
+                    </div>
+                </div>
             </div>
-            <div>
-                <span className="count">{ format(score) }</span>
-                <span className="label">points</span>
+            <div className="tab">
+                <div className="graph-container">
+                    <Bar
+                        data={chartScoreData}
+                        options={chartOptions as any}/>
+                </div>
+                <div className="counts">
+                    <div>
+                        <span className="count">{ format(score) }</span>
+                        <span className="label">points</span>
+                    </div>
+                </div>
             </div>
-        </div>
+        </HorizontalScrollable>
     </div>
 }
 
