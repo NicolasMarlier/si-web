@@ -13,7 +13,7 @@ const InvaderSelector:React.FC<Props> = (props) => {
     return <div id="invaders-selector">
         { _.sortBy(invaders, 'date_flash').map(invader => {
             
-            const matchingHint = _.find(hints, (h) => h.description.replace("-", "_").split(" ")[0] == invader.name)
+            const matchingHint = _.find(hints, (h) => h.description.trim().replace("-", "_").split(" ")[0] == invader.name)
             return <div
                 className="invader-selector"
                 key={invader.name}
