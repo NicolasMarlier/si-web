@@ -41,16 +41,12 @@ const hintUrl = (hint: Hint) => {
     return hintPng
 }
 
-const hintIcon = (hint: Hint) => ({
-    path: google.maps.SymbolPath.CIRCLE,
-    fillColor: hintColor(hint),
-    fillOpacity: 0.25,
-    strokeWeight: 0,
-    rotation: 0,
-    scale: 20,
-})
-
-const hintIconPng = (hint: Hint) => ({url: hintUrl(hint)})
+const hintIcon = (hint: Hint) => {
+    return {
+        url: hintUrl(hint),
+        anchor: new google.maps.Point(20, 20)
+    }
+}
 
 const selectedHintIcon = (hint: Hint) => ({
     path: google.maps.SymbolPath.CIRCLE,
@@ -405,7 +401,6 @@ const Map = () => {
     const panToCurrentLocation = () => {
         map.current?.panTo(currentGeoLocation)
     }
-
 
     useEffect(() => {
         unselectSelectedInvaderMarker()
