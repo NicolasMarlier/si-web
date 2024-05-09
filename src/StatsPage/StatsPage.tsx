@@ -54,7 +54,17 @@ const chartOptions = {
                 color: "#999"
             }
         },
-        y: {
+        yCount: {
+            position: 'right',
+            grid: {
+                color: "#00000011"
+            },
+            ticks: {
+                stepSize: 500,
+                color: "#999"
+            }
+        },
+        yScore: {
             grid: {
                 color: "#00000011"
             },
@@ -104,16 +114,18 @@ const StatsPage = () => {
 
         return {
             labels,
-            datasets: {
-                count: [{
+            datasets: [
+                {
                     data: counts,
-                    backgroundColor: "#ffcc00cc",
-                }],
-                score: [{
+                    backgroundColor: "#00acff",
+                    yAxisID: 'yCount'
+                },
+                {
                     data: scores,
-                    backgroundColor: "#ffcc00cc",
-                }],
-            }[kind],
+                    backgroundColor: "#2bcc23",
+                    yAxisID: 'yScore'
+                }
+                ],
             options: chartOptions
         }
     }
@@ -146,8 +158,7 @@ const StatsPage = () => {
             </div>
         </Menu>
         
-        <HorizontalScrollable>
-            <div className="tab">
+            {/* <div className="tab">
                 <div className="graph-container">
                     <Bar
                         data={chartCountData}
@@ -159,21 +170,22 @@ const StatsPage = () => {
                         <span className="label">flashés</span>
                     </div>
                 </div>
+            </div> */}
+            <div className="graph-container">
+                <Bar
+                    data={chartScoreData}
+                    options={chartOptions as any}/>
             </div>
-            <div className="tab">
-                <div className="graph-container">
-                    <Bar
-                        data={chartScoreData}
-                        options={chartOptions as any}/>
+            <div className="today">
+                <div className="score">
+                    <span className="value">{ format(score) }</span>
+                    <span className="label">points</span>
                 </div>
-                <div className="counts">
-                    <div>
-                        <span className="count">{ format(score) }</span>
-                        <span className="label">points</span>
-                    </div>
+                <div className="count">
+                    <span className="value">{ format(totalFlashedCount) }</span>
+                    <span className="label">flashés</span>
                 </div>
             </div>
-        </HorizontalScrollable>
     </div>
 }
 

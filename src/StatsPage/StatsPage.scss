@@ -1,33 +1,38 @@
 .stats-page {
     height: 100%;
     padding: 50px;
-
-    .tab {
-        display: flex;
-        flex-direction: column;
-        .graph-container {
-            flex: 1 1 auto;
-        }
+    display: flex;
+    flex-direction: column;
     
-        .counts {
-            flex: 0 0 50px;
-            padding: 50px 0;
-            display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
-                
-            .count {
-                font-size: 60px;
-                color: #444;
-                padding: 0 10px;
-            }
-            .label {
-                font-size: 40px;
-                color: #aaa;
-            }
+    .graph-container {
+        flex: 1 1 auto;
+    }
+
+    .today {
+        flex: 0 0 50px;
+        padding: 50px 0;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+            
+        .value {
+            font-size: 60px;
+            color: #444;
+            padding: 0 10px;
+        }
+        .label {
+            font-size: 40px;
+            color: #aaa;
+        }
+
+        .count .label {
+            color: #2bcc23;
+        }
+
+        .score .label {
+            color: #00acff;
         }
     }
-    
 }
 
 @media screen and (max-width:640px) {
