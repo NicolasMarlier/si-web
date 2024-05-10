@@ -99,7 +99,6 @@ const StatsPage = () => {
                 counts[i] = counts[i] + counts[i-1]
                 scores[i] = scores[i] + scores[i-1]
             }
-            
         }
 
         return {
@@ -118,13 +117,10 @@ const StatsPage = () => {
         }
     }
 
-    const format = (number: number): string => {
-        if(number >= 1000) {
-            return `${format(Math.floor(number / 1000))} ${number % 1000}`
-        }
-        return `${number}`
+    function format(number: number) {
+        return number.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1 ');
     }
-
+    
     const [chartData, setChartData] = useState(buildData())
 
     useEffect(() => {
