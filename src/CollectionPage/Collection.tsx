@@ -8,77 +8,68 @@ import { AppContext } from '../AppProvider';
 import InvaderZoomedComponent from './InvaderZoomedComponent';
 import Menu from "../Menu"
 import AbstractInvaderComponent from './AbstractInvaderComponent';
-
-type Mode = "date_pos" | "date_flash"
+import Helpers from '../Helpers';
 
 const Collection = () => {
   const { invaders, cities } = useContext(AppContext)
-  const [mode, setMode] = useState("date_flash" as Mode)
   const [currentInvader, setCurrentInvader] = useState(null as Invader | null)
+  const [currentCity, setCurrentCity] = useState(undefined as City | undefined)
   const [abstractInvadersToDisplay, setAbstractInvadersToDisplay] = useState([] as AbstractInvader[])
+  const [abstractInvaders, setAbstractInvaders] = useState([] as AbstractInvader[])
+  const [reverseOrder, setReverseOrder] = useState(true)
 
   const navigate = useNavigate()
   const { invader_name } = useParams()
+  const { city_slug } = useParams()
 
   useEffect(() => {
     setCurrentInvader(_.find(invaders, {name: invader_name}) || null)
   }, [invader_name])
 
   useEffect(() => {
-    // invadersAsDict = invaders.
-    // setSearchables(
-    //   _.flatten(
-    //     cities.map(city => {
-    //       _.range(1, city.invaders_count).map(index => {
-    //         invaders.find()
-    //       })
-    //     })
-    //   )
-
-      // [
-      // ...invaders.map(invader => ({
-      //   kind: 'invader',
-      //   invader_name: invader.name,
-      //   value: invader
-      // }))
-    // )
-  }, [cities])  
-
-  const cityOrder = (citySlug: string) => {
-    return {
-      'PA': 'AA',
-      'RN': 'AB',
-      'VLMO': 'AC',
-      'NA': 'AD'
-    }[citySlug] || citySlug
-  }
+    if(!city_slug) {
+      setCurrentCity(undefined)
+    }
+    if(city_slug === 'all') {
+      setCurrentCity(undefined)
+    }
+    else {
+      setCurrentCity(_.find(cities, {slug: city_slug}))
+    }
+  }, [city_slug])
 
   useEffect(() => {
-    if(mode === "date_pos") {
-        setAbstractInvadersToDisplay(
-          _.sortBy(
-            _.flatten(_.map(cities, 'abstract_invaders')),
-            (abstract_invader) => [cityOrder(abstract_invader.name.split("_")[0]), abstract_invader.name.split("_")[1].padStart(8)].join('_')
-          )
+    if(city_slug === 'all') {
+      setAbstractInvaders(
+        _.map(
+          _.sortBy(invaders, 'date_flash'),
+          (invader) => ({
+            name: invader.name,
+            city_name: invader.city_name,
+            kind: 'invader',
+            object: invader
+          })
         )
-    }
-    else if(mode === "date_flash") {
-      setAbstractInvadersToDisplay(
-          _.reverse(
-            _.sortBy(
-              _.filter(
-                _.flatten(_.map(cities, 'abstract_invaders')),
-                {kind: 'invader'}
-              ),
-              (abstract_invader) => abstract_invader.object.date_flash)
-          )
       )
     }
-  }, [mode, cities])
+    else if(currentCity) {
+      setAbstractInvaders(
+        _.sortBy(currentCity.abstract_invaders, (ai) => parseInt(ai.name.split(/-|_/)[1]))
+      )
+    }
+    else {
+      setAbstractInvaders([])
+    }
+  }, [city_slug, currentCity, reverseOrder])
 
   useEffect(() => {
-    console.log(abstractInvadersToDisplay)
-  }, [abstractInvadersToDisplay])
+    if(reverseOrder) {
+      setAbstractInvadersToDisplay(_.reverse(abstractInvaders))
+    }
+    else {
+      setAbstractInvadersToDisplay(abstractInvaders)
+    }
+  }, [abstractInvaders, reverseOrder])
 
   const showSearchModal = (e: React.MouseEvent) => {
     window.dispatchEvent(
@@ -92,7 +83,7 @@ const Collection = () => {
       case 'invader':
         const invader = object as Invader
         return <InvaderComponent
-          onClick={() => navigate(`/collection/${invader.name}`)}
+          onClick={() => navigate(Helpers.invaderPath(invader))}
           key={name}
           invader={invader}/>
       default:
@@ -102,22 +93,56 @@ const Collection = () => {
     }
   }
 
+
   return (
     <div className="collection-container">
+      { !currentCity && city_slug !== 'all' && <div className="cities">
+      <div
+            className='city'
+            onClick={() => navigate('/cities/all')}>
+              <div className='icon chevron-right'/>
+              Tous
+      </div>
+        { _.sortBy(cities, (c => c.first_flash_at || '')).map(city => 
+          <div
+            className='city'
+            onClick={() => navigate(`/cities/${city.slug}`)}>
+              <div className='icon chevron-right'/>
+              {city.name} ({city.flashs_count} + {city.hints_count} + {city.deads_count} / {city.invaders_count})
+          </div>
+        ) }
+      </div>}
+      { currentCity && <div
+            className='current-city'
+            onClick={() => navigate('/cities')}>
+              <div className='icon chevron-down'/>
+              {currentCity.name} ({currentCity.flashs_count} + {currentCity.hints_count} + {currentCity.deads_count} / {currentCity.invaders_count})
+      </div>}
+      { city_slug === 'all' && <div
+            className='current-city'
+            onClick={() => navigate('/cities')}>
+              <div className='icon chevron-down'/>
+              Tous
+      </div>}
+
       <div className="collection">
         { abstractInvadersToDisplay.map(abstract_invader => component(abstract_invader)) }
       </div>
-      { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => navigate("/collection")}/>}
+      { currentInvader && <InvaderZoomedComponent invader={currentInvader} onClose={() => navigate(Helpers.cityPath(currentInvader))}/>}
       <Menu>
-      { <>
-          <div className={`btn round ${mode=='date_pos' ? 'active' : ''} ${currentInvader ? 'hidden' : ''}`} onClick={() => setMode("date_pos") }>
-            <div className="icon trowel"></div>
-            <div className="desktop-label">Ordre de pose</div>
-          </div>
-          <div className={`btn round ${mode=='date_flash' ? 'active' : ''} ${currentInvader ? 'hidden' : ''}`} onClick={() => setMode("date_flash") }>
-            <div className="icon flash"></div>
-            <div className="desktop-label">Ordre de flash</div>
-          </div>
+      { !currentInvader && <>
+          { (city_slug === 'all' || currentCity) && reverseOrder &&
+            <div className={`btn round`} onClick={ () => setReverseOrder(!reverseOrder) }>
+              <div className="icon arrow-up"></div>
+              <div className="desktop-label">Anciens d'abord</div>
+            </div>
+          }
+          { (city_slug === 'all' || currentCity) && !reverseOrder &&
+            <div className={`btn round`} onClick={ () => setReverseOrder(!reverseOrder) }>
+              <div className="icon arrow-down"></div>
+              <div className="desktop-label">Récents d'abord</div>
+            </div>
+          }
           <div className={`btn round ${currentInvader ? 'hidden' : ''}`} onClick={ showSearchModal }>
             <div className="icon magnifying-glass"></div>
             <div className="desktop-label">Search</div>

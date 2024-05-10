@@ -4,13 +4,16 @@ import { useParams } from 'react-router-dom'
 import { NavLink } from 'react-router-dom'
 import { AppContext } from "./AppProvider"
 import loadingGif from './icons/loading.gif'
-
+import Helpers from './Helpers'
 import './Menu.scss';
+import _ from "lodash"
 
 const Menu = (props: PropsWithChildren) => {
     const { children } = props
-    const { loading } = useContext(AppContext)
+    const { loading, invaders } = useContext(AppContext)
     const { invader_name } = useParams()
+
+    const invader = _.find(invaders, {name: invader_name})
 
     return (
         <div className="menu">
@@ -23,7 +26,7 @@ const Menu = (props: PropsWithChildren) => {
                             <div className="desktop-label">Carte</div>
                     </NavLink>
                     <NavLink
-                        to={invader_name ? `/collection/${invader_name}` : "/collection"}
+                        to={invader ? Helpers.invaderPath(invader) : "/cities/all"}
                         className="btn">
                             <div className="icon collection"/>
                             <div className="desktop-label">Collection</div>

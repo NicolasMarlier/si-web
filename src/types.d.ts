@@ -53,6 +53,7 @@ interface City {
     hints_count: integer
     deads_count: integer
     searchables?: Searchable[]
+    abstract_invaders: AbstractInvader[]
 }
 
 interface Searchable {

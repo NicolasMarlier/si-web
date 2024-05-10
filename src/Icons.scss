@@ -59,4 +59,16 @@
     &.chart-column {
       mask: url(icons/chart-column.svg) no-repeat center;
     }
+    &.chevron-down {
+      mask: url(icons/chevron-down.svg) no-repeat center;
+    }
+    &.chevron-right {
+      mask: url(icons/chevron-right.svg) no-repeat center;
+    }
+    &.arrow-up {
+      mask: url(icons/arrow-up.svg) no-repeat center;
+    }
+    &.arrow-down {
+      mask: url(icons/arrow-down.svg) no-repeat center;
+    }
   }

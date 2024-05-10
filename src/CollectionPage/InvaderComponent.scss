@@ -4,6 +4,10 @@
     border-radius: 4px;
     overflow: hidden;
     aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 100px;
 
     .unknown-position-indicator {
         position: absolute;

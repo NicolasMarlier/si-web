@@ -34,10 +34,13 @@ const router = createBrowserRouter(
         element={<AppProvider><App /></AppProvider>}
       >
         <Route
-          path="collection"
-          element={<Collection />}/>
+          path="cities"
+          element={<Collection/>}/>
         <Route
-          path="collection/:invader_name"
+          path="cities/:city_slug"
+          element={<Collection/>}/>
+        <Route
+          path="cities/:city_slug/:invader_name"
           element={<Collection/>}/>
         <Route
           path="map"
