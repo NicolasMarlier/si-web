@@ -9,6 +9,7 @@ import InvaderZoomedComponent from './InvaderZoomedComponent';
 import Menu from "../Menu"
 import AbstractInvaderComponent from './AbstractInvaderComponent';
 import Helpers from '../Helpers';
+import CityNavigator from './ CityNavigator';
 
 const Collection = () => {
   const { invaders, cities } = useContext(AppContext)
@@ -96,34 +97,18 @@ const Collection = () => {
 
   return (
     <div className="collection-container">
-      { !currentCity && city_slug !== 'all' && <div className="cities">
-      <div
-            className='city'
-            onClick={() => navigate('/cities/all')}>
-              <div className='icon chevron-right'/>
-              Tous
-      </div>
-        { _.sortBy(cities, (c => c.first_flash_at || '')).map(city => 
-          <div
-            className='city'
-            onClick={() => navigate(`/cities/${city.slug}`)}>
-              <div className='icon chevron-right'/>
-              {city.name} ({city.flashs_count} + {city.hints_count} + {city.deads_count} / {city.invaders_count})
-          </div>
+      <div className="cities">
+        <CityNavigator
+          name='Tous'
+          slug='all'
+          current_slug={city_slug}/>
+        { _.sortBy(cities, (c => c.first_flash_at || '')).map((city) => 
+          <CityNavigator
+            name={city.name}
+            slug={city.slug}
+            current_slug={city_slug}/>
         ) }
-      </div>}
-      { currentCity && <div
-            className='current-city'
-            onClick={() => navigate('/cities')}>
-              <div className='icon chevron-down'/>
-              {currentCity.name} ({currentCity.flashs_count} + {currentCity.hints_count} + {currentCity.deads_count} / {currentCity.invaders_count})
-      </div>}
-      { city_slug === 'all' && <div
-            className='current-city'
-            onClick={() => navigate('/cities')}>
-              <div className='icon chevron-down'/>
-              Tous
-      </div>}
+      </div>
 
       <div className="collection">
         { abstractInvadersToDisplay.map(abstract_invader => component(abstract_invader)) }

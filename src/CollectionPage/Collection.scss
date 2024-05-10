@@ -5,7 +5,7 @@
 .collection-container {
     padding: 0 0 54px 0;
 
-    .city, .current-city {
+    .city {
         padding: 10px 20px;
         background: #fafafa;
         font-size: 20px;
@@ -17,6 +17,11 @@
         .icon {
             height: 20px;
             margin: 5px 0 0;
+            transition: 0.2s transform;
+        }
+
+        &.current .icon {
+            transform: rotate(90deg);
         }
     }
 }
