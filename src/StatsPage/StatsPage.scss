@@ -18,19 +18,46 @@
         .value {
             font-size: 60px;
             color: #444;
-            padding: 0 10px;
+            padding: 0 10px 0 0;
         }
         .label {
             font-size: 40px;
             color: #aaa;
         }
 
-        .count .label {
-            color: #2bcc23;
+        .score, .count {
+            border-bottom: 6px solid transparent;
+        }
+        
+
+        &.count-active {
+            .count {
+                border-bottom: 6px solid #00acff;
+                .label {
+                    color: #00acff;       
+                }
+            }
+            .score {
+                cursor: pointer;
+                &:hover {
+                    border-bottom: 6px solid #ddd;
+                }
+            }
         }
 
-        .score .label {
-            color: #00acff;
+        &.score-active {
+            .score {
+                border-bottom: 6px solid #2bcc23;
+                .label {
+                    color: #2bcc23;
+                }
+            }
+            .count {
+                cursor: pointer;
+                &:hover {
+                    border-bottom: 6px solid #ddd;
+                }
+            }
         }
     }
 }

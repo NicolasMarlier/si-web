@@ -7,7 +7,6 @@ import { AppContext } from "../AppProvider";
 import moment from "moment";
 import _ from "lodash";
 import './StatsPage.scss'
-import HorizontalScrollable from "./HorizontalScrollable";
 
 Chart.register(
     BarElement,
@@ -54,22 +53,12 @@ const chartOptions = {
                 color: "#999"
             }
         },
-        yCount: {
+        y: {
             position: 'right',
             grid: {
                 color: "#00000011"
             },
             ticks: {
-                stepSize: 500,
-                color: "#999"
-            }
-        },
-        yScore: {
-            grid: {
-                color: "#00000011"
-            },
-            ticks: {
-                stepSize: 500,
                 color: "#999"
             }
         }
@@ -81,12 +70,13 @@ const StatsPage = () => {
     const { invaders, cities, syncInvadersFromOfficialApi } = useContext(AppContext)
 
     const [cumulative, setCumulative] = useState(false)
+    const [tab, setTab] = useState('count' as 'count' | 'score')
     
     const score = _.sum(_.map(invaders, "point")) + _.keys(_.groupBy(invaders, "city_id")).length * 100
     const totalFlashedCount = invaders.length
 
 
-    const buildData = (kind: 'count' | 'score') => {
+    const buildData = () => {
         const groups = _.groupBy(invaders, i => moment(i.date_flash).format("YYYY-MM"))
         const city_groups = _.groupBy(cities, c => moment(c.first_flash_at).format("YYYY-MM"))
         const flash_dates = _.sortBy(_.map(invaders, i => moment(i.date_flash)))
@@ -114,18 +104,16 @@ const StatsPage = () => {
 
         return {
             labels,
-            datasets: [
-                {
+            datasets: {
+                count: [{
                     data: counts,
-                    backgroundColor: "#00acff",
-                    yAxisID: 'yCount'
-                },
-                {
+                    backgroundColor: "#00acff"
+                }],
+                score: [{
                     data: scores,
-                    backgroundColor: "#2bcc23",
-                    yAxisID: 'yScore'
-                }
-                ],
+                    backgroundColor: "#2bcc23"
+                }]
+            }[tab],
             options: chartOptions
         }
     }
@@ -137,13 +125,20 @@ const StatsPage = () => {
         return `${number}`
     }
 
-    const [chartCountData, setChartCountData] = useState(buildData('count'))
-    const [chartScoreData, setChartScoreData] = useState(buildData('score'))
+    const [chartData, setChartData] = useState(buildData())
 
     useEffect(() => {
-        setChartCountData(buildData('count'))
-        setChartScoreData(buildData('score'))
-    }, [cumulative])
+        setChartData(buildData())
+    }, [cumulative, tab])
+
+    const toggleTab = () => {
+        if(tab === 'count') {
+            setTab('score')
+        }
+        else {
+            setTab('count')
+        }
+    }
 
     
     return <div className="stats-page">
@@ -157,26 +152,12 @@ const StatsPage = () => {
                 <div className="desktop-label">Synchroniser</div>
             </div>
         </Menu>
-        
-            {/* <div className="tab">
-                <div className="graph-container">
-                    <Bar
-                        data={chartCountData}
-                        options={chartOptions as any}/>
-                </div>
-                <div className="counts">
-                    <div>
-                        <span className="count">{ format(totalFlashedCount) }</span>
-                        <span className="label">flashés</span>
-                    </div>
-                </div>
-            </div> */}
             <div className="graph-container">
                 <Bar
-                    data={chartScoreData}
+                    data={chartData}
                     options={chartOptions as any}/>
             </div>
-            <div className="today">
+            <div className={`today ${tab}-active`} onClick={toggleTab}>
                 <div className="score">
                     <span className="value">{ format(score) }</span>
                     <span className="label">points</span>
