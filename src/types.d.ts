@@ -47,7 +47,7 @@ interface City {
     name: string
     slug: string
     position: Position
-    first_flash_at: string
+    first_flash_at: string | undefined
     invaders_count: integer
     flashs_count: integer
     hints_count: integer

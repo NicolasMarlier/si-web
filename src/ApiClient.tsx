@@ -188,7 +188,7 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
                     slug,
                     position,
                     invaders_count,
-                    first_flash_at: _.min(_.map(cityInvaders, 'flashed_at')),
+                    first_flash_at: _.min(_.map(cityInvaders, 'date_flash')),
                     flashs_count: cityInvaders.length,
                     hints_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") == -1).length,
                     deads_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") > -1).length,
