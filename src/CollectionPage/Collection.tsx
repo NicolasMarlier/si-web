@@ -106,6 +106,7 @@ const Collection = () => {
           <CityNavigator
             name={city.name}
             slug={city.slug}
+            city={city}
             current_slug={city_slug}/>
         ) }
       </div>

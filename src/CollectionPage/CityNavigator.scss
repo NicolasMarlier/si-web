@@ -5,14 +5,27 @@
     text-transform: uppercase;
     display: flex;
     cursor: pointer;
+    align-items: center;
     
     .icon {
         height: 20px;
-        margin: 5px 0 0;
         transition: 0.2s transform;
+        width: 50px;
     }
 
     &.current .icon {
         transform: rotate(90deg);
+    }
+
+    .name {
+        width: 200px;
+        flex-grow: 1;
+    }
+
+    .stats {
+        color: #aaa;
+        font-size: 16px;
+        width: 100px;
+        text-align: right;
     }
 }

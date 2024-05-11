@@ -1,0 +1,17 @@
+.city-stats {
+    width: 200px;
+    height: 8px;
+    display: flex;
+    overflow: hidden;
+    background: #eee;
+
+    .flashs {
+        background: #2bcc23; 
+    }
+    .hints {
+        background: #00acff; 
+    }
+    .deads {
+        background: #666;
+    }
+}
