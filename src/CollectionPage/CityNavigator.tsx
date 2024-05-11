@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom"
+import "./CityNavigator.scss"
 
 interface Props {
     name: string

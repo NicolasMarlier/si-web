@@ -9,7 +9,7 @@ import InvaderZoomedComponent from './InvaderZoomedComponent';
 import Menu from "../Menu"
 import AbstractInvaderComponent from './AbstractInvaderComponent';
 import Helpers from '../Helpers';
-import CityNavigator from './ CityNavigator';
+import CityNavigator from './CityNavigator';
 
 const Collection = () => {
   const { invaders, cities } = useContext(AppContext)

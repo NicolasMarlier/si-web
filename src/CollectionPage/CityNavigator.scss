@@ -1,0 +1,18 @@
+.city {
+    padding: 10px 20px;
+    font-size: 20px;
+    border-bottom: 1px solid #eee;
+    text-transform: uppercase;
+    display: flex;
+    cursor: pointer;
+    
+    .icon {
+        height: 20px;
+        margin: 5px 0 0;
+        transition: 0.2s transform;
+    }
+
+    &.current .icon {
+        transform: rotate(90deg);
+    }
+}

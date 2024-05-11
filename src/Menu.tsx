@@ -7,11 +7,14 @@ import loadingGif from './icons/loading.gif'
 import Helpers from './Helpers'
 import './Menu.scss';
 import _ from "lodash"
+import { useLocation } from 'react-router-dom';
+
 
 const Menu = (props: PropsWithChildren) => {
     const { children } = props
     const { loading, invaders } = useContext(AppContext)
     const { invader_name } = useParams()
+    const location = useLocation()
 
     const invader = _.find(invaders, {name: invader_name})
 
@@ -27,7 +30,7 @@ const Menu = (props: PropsWithChildren) => {
                     </NavLink>
                     <NavLink
                         to={invader ? Helpers.invaderPath(invader) : "/cities/all"}
-                        className="btn">
+                        className={`btn ${location.pathname.startsWith("/cities") ? 'active' : ''}`}>
                             <div className="icon collection"/>
                             <div className="desktop-label">Collection</div>
                     </NavLink>
