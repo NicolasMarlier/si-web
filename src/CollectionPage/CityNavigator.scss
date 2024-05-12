@@ -10,7 +10,8 @@
     .icon {
         height: 20px;
         transition: 0.2s transform;
-        width: 50px;
+        width: 20px;
+        margin: 0 10px 0 0;
     }
 
     &.current .icon {
@@ -18,8 +19,14 @@
     }
 
     .name {
-        width: 200px;
+        width: 150px;
         flex-grow: 1;
+    }
+
+    .city-stats {
+        flex-grow: 1;
+        width: 50px;
+        max-width: 200px;
     }
 
     .stats {
