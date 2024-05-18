@@ -64,3 +64,13 @@
         }
     }
 }
+
+
+@media screen and (max-width:640px) {
+    .abstract-invader {
+        .name {
+            font-size: 18px;
+            line-height: 35px;
+        }
+    }
+}  
