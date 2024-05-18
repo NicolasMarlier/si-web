@@ -90,6 +90,7 @@ const Collection = () => {
       default:
         return <AbstractInvaderComponent
           key={name}
+          onClick={() => window.open(Helpers.hintInvaderPath(abstract_invader), '_blank')}
           abstract_invader={abstract_invader}/>
     }
   }

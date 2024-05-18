@@ -1,3 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Shadows+Into+Light&family=Special+Elite&display=swap');
+
+
 .abstract-invader {
     position: relative;
     border-radius: 4px;
@@ -5,10 +8,11 @@
 
     aspect-ratio: 1 / 1;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: center;
     min-width: 100px;
 
+    cursor: pointer;
     
     
 
@@ -16,17 +20,33 @@
     .logo {
         position: absolute;
         mask: url(../icons/invader.svg) no-repeat center;
-        background-color: #00000009;
+        background-color: #000000;
         top: 0;
         left: 0;
         bottom: 0;
         right: 0;
+        transform: scale(0.6);
+        opacity: 0.2;
+        transition: transform 0.1s, opacity 0.15s;
     }
 
     .name {
         text-align: center;
-        font-size: 1em;
-        font-family: 'Impact';
+        font-size: 25px;
+        line-height: 45px;
+        font-weight: 600;
+        font-family: "Shadows Into Light", cursive;
+        color: #00000088;
+    }
+
+    &:hover {
+        .name {
+            color: #000000aa;
+        }   
+        .logo {
+            transform: scale(0.65);
+            opacity: 0.3;
+        }
     }
 
     &.hint {
