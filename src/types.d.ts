@@ -13,6 +13,28 @@ interface Invader {
     position: Position | undefined
 }
 
+interface RawInvaderV2 {
+    image: string
+    point: integer
+    city_id: integer
+    city_name: string
+    name: string
+    space_id: integer
+    date_pos: string
+    date_flash: string
+}
+
+interface RawInvaderV3 {
+    image_url: string
+    point: integer
+    city_id: integer
+    city_name: string
+    name: string
+    space_id: integer
+    date_pos: string
+    date_flash: string
+}
+
 interface AbstractInvader {
     name: string,
     city_name: string,
@@ -49,6 +71,21 @@ interface City {
     position: Position
     first_flash_at: string | undefined
     invaders_count: integer
+    flashs_count: integer
+    hints_count: integer
+    deads_count: integer
+    searchables?: Searchable[]
+    abstract_invaders: AbstractInvader[]
+}
+interface CityRaw {
+    id: number
+    name: string
+    short_name: string
+    si_count: number
+}
+
+interface CityData {
+    first_flash_at: string | undefined
     flashs_count: integer
     hints_count: integer
     deads_count: integer

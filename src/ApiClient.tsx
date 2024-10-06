@@ -3,10 +3,10 @@ import _ from "lodash"
 
 import Cache from './Cache'
 
-const OFFICIAL_BASE_PATH = "https://space-invaders.com/api"
 const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UID
-
 const BASE_PATH = "https://space-invader-api.herokuapp.com"
+const OFFICIAL_API_PATH = "https://api.space-invaders.com/flashinvaders_v3_pas_trop_predictif/api/gallery"
+
 //const BASE_PATH = "http://localhost:3001"
 
 
@@ -76,11 +76,30 @@ const syncInvaders = async() => {
     return syncApiFromOfficalApi(officialInvaders)
 }
 
-const fetchInvadersOffical = (): Promise<{invaders: Invader[], cities: {[name: string]: [count: number]}}> => axios
-    .get(`${OFFICIAL_BASE_PATH}/flashesV2/?uid=${UID}`)
+const rawInvaderV3toV2 = ({
+    image_url, point, city_id, name, space_id, date_pos, date_flash
+}: RawInvaderV3) => ({
+        image: image_url,
+        point,
+        city_id,
+        name,
+        space_id,
+        date_pos,
+        date_flash
+    } as Invader)
+
+const fetchInvadersOffical = (): Promise<{invaders: Invader[], cities: CityRaw[]}> => axios
+    .get(
+        OFFICIAL_API_PATH,
+        {
+            params: {
+                uid: UID
+            }
+        }
+    )
     .then(({data: {invaders, cities}}) => ({
-        invaders: (Object.values(invaders) as Invader[]),
-        cities: (cities as {[name: string]: [count: number]}),
+        invaders: (Object.values(invaders) as RawInvaderV3[]).map((invaderV3) => rawInvaderV3toV2(invaderV3)),
+        cities: (cities as CityRaw[]),
     }))
 
 const listInvaders = (): Promise<Invader[]> => fetchInvaders()
@@ -147,36 +166,37 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
         return result
     }, {} as {[name: string]: Hint})
     
+
     return _.reduce(
         Cache.get('cities') || {},
-        (result, invaders_count, city_name) => {
-            const cityInvaders = _.filter(invaders, {city_name: city_name})
+        (result, {id, name, si_count}) => {
+            const cityInvaders = _.filter(invaders, {city_id: id})
             if(cityInvaders.length == 0) { return result }
 
             const slug = cityInvaders[0].name.split("_")[0]
             const cityHints = _.filter(hints, hint => hint.description.startsWith(`${slug}-`))
             const position = cityInvaders[0].position || {lat: 0, lng: 0}
 
-            const abstract_invaders = _.range(1, invaders_count + 1).map(index => {
-                const name = [slug, index < 10 ? `0${index}` : index].join("_")
+            const abstract_invaders = _.range(1, si_count + 1).map(index => {
+                const invaderName = [slug, index < 10 ? `0${index}` : index].join("_")
                 let object = null
                 let kind = 'not_found'
-                if(name in invadersDict) {
+                if(invaderName in invadersDict) {
                     kind = 'invader'
-                    object = invadersDict[name]
+                    object = invadersDict[invaderName]
                 }
                 else if(index == 1 && slug in invadersDict) {
                     kind = 'invader'
                     object = invadersDict[slug]
                 }
-                else if(name in hintsDict) {
+                else if(invaderName in hintsDict) {
                     kind = 'hint'
-                    object = hintsDict[name]
+                    object = hintsDict[invaderName]
                 }
 
                 return {
-                    name,
-                    city_name,
+                    name: invaderName,
+                    city_name: name,
                     object,
                     kind
                 }
@@ -184,10 +204,10 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
             return [
                 ...result,
                 ...[{
-                    name: city_name,
+                    name,
                     slug,
                     position,
-                    invaders_count,
+                    invaders_count: si_count,
                     first_flash_at: _.min(_.map(cityInvaders, 'date_flash')),
                     flashs_count: cityInvaders.length,
                     hints_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") == -1).length,
