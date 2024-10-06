@@ -21,6 +21,7 @@ const InvaderSelector:React.FC<Props> = (props) => {
                 <img src={invader.hosted_image_300_url} className="w-100"
                     onClick={() => onSelect(invader)}/>
                 { matchingHint && <div className="matching-hint" onClick={() => onSelectHint(matchingHint)}/>}
+                <div className="selector-label">{invader.name}</div>
             </div>
         }
         )}

@@ -26,6 +26,19 @@
             font-size: 1.4em;
             cursor: pointer;
         }
+
+        .selector-label {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            font-size: 12px;
+            background: #000;
+            color: #fff;
+            text-align: center;
+            line-height: 15px;
+        }
     }
 
 
