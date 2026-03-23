@@ -56,7 +56,7 @@ const SearchOverlay = () => {
             return hintDetails(value as Hint)
         }
         else {
-            throw `Unsupported item kind: ${kind}`
+            throw new Error(`Unsupported item kind: ${kind}`)
         }
     }
 

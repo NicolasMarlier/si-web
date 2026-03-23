@@ -83,7 +83,7 @@ const StatsPage = () => {
         const max_flash_date = _.max(flash_dates)
         const min_flash_date = _.min(flash_dates)
         if(max_flash_date === undefined || min_flash_date === undefined) {
-            throw 'No dates!'
+            throw new Error('No dates!')
         }
         let labels = [
             min_flash_date.startOf('month')
