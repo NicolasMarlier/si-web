@@ -4,9 +4,9 @@ import _ from "lodash"
 import Cache from './Cache'
 
 const UID = "17BE08E8-5414-450A-A258-61AA60A1F51F"//process.env.SPACE_INVADER_UID
-const BASE_PATH = "https://space-invader-api.herokuapp.com"
 const OFFICIAL_API_PATH = "https://api.space-invaders.com/flashinvaders_v3_pas_trop_predictif/api/gallery"
 
+const BASE_PATH = "https://space-hunter-api.nicolasm.fr"
 //const BASE_PATH = "http://localhost:3001"
 
 
@@ -171,7 +171,7 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
         Cache.get('cities') || {},
         (result, {id, name, si_count}) => {
             const cityInvaders = _.filter(invaders, {city_id: id})
-            if(cityInvaders.length == 0) { return result }
+            if(cityInvaders.length === 0) { return result }
 
             const slug = cityInvaders[0].name.split("_")[0]
             const cityHints = _.filter(hints, hint => hint.description.startsWith(`${slug}-`))
@@ -185,7 +185,7 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
                     kind = 'invader'
                     object = invadersDict[invaderName]
                 }
-                else if(index == 1 && slug in invadersDict) {
+                else if(index === 1 && slug in invadersDict) {
                     kind = 'invader'
                     object = invadersDict[slug]
                 }
@@ -210,7 +210,7 @@ const computeCitiesData = (invaders: Invader[], hints: Hint[]): City[] => {
                     invaders_count: si_count,
                     first_flash_at: _.min(_.map(cityInvaders, 'date_flash')),
                     flashs_count: cityInvaders.length,
-                    hints_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") == -1).length,
+                    hints_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") === -1).length,
                     deads_count: _.filter(cityHints, hint => hint.description.indexOf("DEAD") > -1).length,
                     abstract_invaders
                 }]
